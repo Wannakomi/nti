@@ -1,0 +1,3426 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Stok Gudang</title>
+<style>
+*{box-sizing:border-box}
+:root{--g:#215a46;--cream:#f4f1e8;--bar:#dcdcdc;--ink:#14213d;--line:#6b7280;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--cream);font-family:system-ui,sans-serif;color:var(--ink);min-height:100vh;min-height:100dvh}
+button,input,textarea{font:inherit;color:inherit}
+#app{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+label,.lb{display:block;font-size:18px;margin-bottom:6px;font-weight:600}
+.mut{color:#6b7280;font-weight:400}
+.i{min-height:56px;width:100%;padding:0 14px;border:1px solid var(--line);border-radius:8px;background:#fff;font-size:18px}
+textarea.i{padding:12px 14px;min-height:96px;resize:none}
+.tb{min-height:48px;padding:0 18px;border-radius:8px;cursor:pointer;font-size:16px;font-weight:600;border:1px solid var(--line);background:#fff}
+.hdr{background:var(--bar);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:68px}
+.hdr b{font-size:22px}.hdr .who{margin-left:auto;margin-right:8px;font-size:17px}
+.err{color:#b91c1c;font-weight:600;font-size:18px}
+.pg{flex:1;padding:20px;display:flex;flex-direction:column;gap:16px}
+/* login */
+.login{display:flex;justify-content:center;padding:90px 16px}
+.card{width:360px;max-width:100%;background:#fff;border:1px solid #cfcfcf;border-radius:6px;padding:28px;display:flex;flex-direction:column;gap:14px;height:fit-content}
+.btn-g{min-height:60px;border:0;border-radius:6px;background:var(--g);color:#fff;font-size:20px;font-weight:700;cursor:pointer}
+/* menu */
+.choices{flex:1;display:grid;grid-template-columns:repeat(2,280px);justify-content:center;align-content:center;gap:32px 40px}
+.obx{position:fixed;left:12px;z-index:60;border:0;border-radius:18px;padding:8px 14px;font-size:14px;font-weight:600;background:#fef3c7;color:#92400e;box-shadow:0 2px 8px rgba(0,0,0,.2);cursor:pointer}.obx.bad{background:#fee2e2;color:#991b1b}.obx.fly{background:#e0f2fe;color:#075985}.obx[hidden]{display:none}
+.big{width:280px;height:150px;border:0;border-radius:6px;background:#fff;color:var(--ink);box-shadow:0 8px 20px rgba(33,90,70,.55),0 2px 4px rgba(33,90,70,.40);font-size:28px;font-weight:600;cursor:pointer}
+/* form */
+.fh{margin:24px 24px 0;border-radius:6px;box-shadow:0 2px 4px rgba(0,0,0,.25);min-height:76px}
+.fh b{font-size:30px;margin-left:24px;margin-right:auto}
+.fh .clk{font-size:16px;text-align:right;line-height:1.35;margin-right:20px;color:#374151}
+.fh .who{margin:0 8px 0 0;font-size:19px;font-weight:700}
+.hb{min-height:52px;padding:0 16px;display:inline-flex;align-items:center;gap:8px;border:2.5px solid #000;border-radius:6px;background:#fff;font-size:20px;font-weight:700;cursor:pointer}
+.fb{flex:1;padding:36px 42px 24px;display:flex;flex-direction:column;gap:20px}
+.cols{display:grid;grid-template-columns:minmax(280px,.9fr) 1.2fr minmax(260px,.85fr);gap:38px;align-items:start}
+.cols h3,.cols label{margin:0 0 8px;font-size:21px;font-weight:700;display:block}
+.lbox{background:#fff;border:1px solid var(--line);border-radius:6px;box-shadow:0 4px 8px rgba(0,0,0,.25);overflow:hidden}
+.list{height:300px;overflow-y:auto;display:flex;flex-direction:column}
+.list button{min-height:58px;text-align:left;padding:6px 12px;border:1px solid #444;border-radius:4px;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:17px;font-weight:700}
+.list button small,.sc small{display:block;font-size:11px;color:#555;font-weight:700}
+.list button.on{background:#eef7f2}
+.list p{margin:0;padding:14px;color:#4b5563;font-size:17px}
+.pager{display:flex;align-items:center;justify-content:center;gap:6px;padding:12px 8px;flex-wrap:wrap}
+.pager .nv{min-height:44px;min-width:64px;border:1px solid #444;border-radius:6px;background:#fff;font-weight:700;font-size:16px;cursor:pointer}
+.pager .nv:disabled{opacity:.35}
+.pager .pn{min-width:34px;min-height:40px;border:1px solid transparent;border-radius:8px;background:none;font-size:14px;font-weight:700;cursor:pointer}
+.pager .pn.cur{border-color:var(--g);box-shadow:0 0 0 2px #cfe8dc}
+.pager span{font-size:14px;font-weight:700}
+.sh,.srow{display:grid;grid-template-columns:1fr 100px;gap:16px}
+.srow{margin-bottom:10px;cursor:pointer}
+.selw{min-height:230px}
+.selw p{margin:0;padding:14px;color:#4b5563;font-size:17px}
+.sc{border:1px solid #444;border-radius:6px;background:#fff;padding:6px 12px;min-height:56px;display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:700;font-size:17px}
+.sx{width:36px;height:36px;flex:none;border-radius:50%;border:0;background:#fde2e2;box-shadow:0 0 8px rgba(239,68,68,.5);color:#dc2626;font-size:22px;cursor:pointer}
+.sq{min-height:56px;border:1px solid #444;border-radius:6px;background:#fff;padding:0 12px;font-size:20px;font-weight:700;display:flex;align-items:center}
+.sq.act{border:3px solid var(--g)}
+.actb{background:#fff;border:1px solid #444;border-radius:6px;padding:8px 12px;min-height:58px;margin-bottom:8px;font-weight:700;font-size:17px}
+.actb small{display:block;font-size:17px;color:#6b7280}
+.pad{background:#000;border-radius:4px;padding:8px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pad button{min-height:78px;border:0;border-radius:8px;background:#d9d9d9;font-size:42px;font-weight:700;cursor:pointer}
+.pad button.del{font-size:17px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.foot{display:flex;flex-direction:column;align-items:center;gap:10px}
+.foot .btn-g{width:320px;max-width:100%;min-height:58px;box-shadow:0 2px 4px rgba(0,0,0,.25)}
+.searching .mid,.searching .padc{display:none}
+.searching .cols{grid-template-columns:1fr}
+.searching .list{height:220px}
+@media(max-width:900px){.cols{grid-template-columns:1fr 1fr}.padc{grid-column:1/-1}.fb{padding:24px}}
+/* tambahan: masuk dengan reparasi/reject, tambah barang, banner Minggu */
+.sq{cursor:pointer}
+.it{margin-bottom:10px}.it .srow{margin-bottom:6px}
+.prob{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:8px 10px;background:#f0f8f4;border:1px solid #b9d9c8;border-radius:6px}
+.prob .t{width:100%;font-weight:700;font-size:15px;color:#374151}
+.pf{display:flex;align-items:center;gap:6px;font-size:16px;font-weight:700}
+.pf .sq{width:84px;min-height:46px}
+.bk{font-weight:700;color:var(--g);font-size:17px}.bk.neg{color:#b91c1c}
+.psum{font-size:15px;color:#374151;margin:0 0 4px 4px;font-weight:600}
+.req{color:#b91c1c;font-weight:700}
+.sun{margin:12px 24px 0;padding:12px 16px;border-radius:6px;background:#fee2e2;color:#991b1b;font-weight:700;font-size:17px}
+.sun[hidden]{display:none}
+.addbox{max-width:560px;width:100%;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:8px;padding:28px;display:flex;flex-direction:column;gap:18px}
+.hint{font-size:15px;color:#6b7280;margin-top:6px}
+.big small{display:block;font-size:15px;font-weight:600;color:#b45309;margin-top:6px}
+@media(max-width:700px){.choices{grid-template-columns:minmax(0,280px)}}
+.notebox{margin-top:14px}.notebox[hidden]{display:none}
+.notebox textarea{min-height:104px}
+.searching .foot,.searching .notebox{display:none}
+.dg.wide{width:680px;padding:32px}
+.cl{border:1px solid #6b7280;border-radius:8px;text-align:left;max-height:48vh;overflow-y:auto;background:#fff}
+.ci{padding:14px 18px;border-bottom:2px solid #9ca3af}.ci:last-child{border-bottom:0}
+.ct{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.ct b{font-size:20px}.ct small{display:block;font-size:14px;color:#4b5563;font-weight:700}
+.cq{font-size:30px;font-weight:700;min-width:72px;text-align:right}
+.cd{display:flex;gap:18px;flex-wrap:wrap;margin-top:8px;font-size:17px}
+.cn{margin-top:8px;padding:8px 12px;background:#f4f4f4;border-radius:6px;font-size:16px}
+/* dialog */
+.ov{position:fixed;inset:0;background:rgba(20,33,61,.45);display:flex;align-items:center;justify-content:center;z-index:5}
+.ov[hidden]{display:none}
+.dg{background:#fff;border-radius:10px;padding:28px;width:440px;max-width:92%;text-align:center;display:flex;flex-direction:column;gap:16px;font-size:19px}
+.dg ul{margin:0;padding:12px 16px;list-style:none;text-align:left;background:#f4f4f4;border-radius:8px;max-height:200px;overflow-y:auto;font-size:17px}
+.dg .btns{display:flex;gap:12px;justify-content:center}
+.dg .btns button{min-height:56px;min-width:130px}
+.chk{width:64px;height:64px;border-radius:50%;background:var(--g);color:#fff;font-size:36px;display:flex;align-items:center;justify-content:center;margin:0 auto}
+/* role operator/QC, notifikasi reject, toast */
+.hdr .pt{margin-left:auto;margin-right:8px;font-size:17px;font-weight:600;color:#374151}
+.whp{display:block;font-size:13px;font-weight:600;color:#4b5563}
+.fh .who{text-align:right;line-height:1.2}
+.choices .big:last-child:nth-child(odd){grid-column:1/-1;justify-self:center}
+.demo{border-top:1px solid #e5e7eb;padding-top:12px}
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.chip.rst{width:100%;margin-top:8px;color:#b91c1c;background:#fff}
+.chip{min-height:44px;border:1px solid var(--line);border-radius:6px;background:#f9fafb;font-size:14px;font-weight:600;cursor:pointer}
+.rejp{margin:16px 24px 0;background:#fff7ed;border:2px solid #f59e0b;border-radius:8px;padding:12px 16px}
+.rejt{display:flex;align-items:center;gap:10px;font-size:20px;flex-wrap:wrap}
+.rejn{background:#f59e0b;color:#fff;border-radius:999px;min-width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:17px}
+.rejh{display:flex;align-items:stretch;gap:10px}
+.rejtg{flex:1;display:flex;align-items:center;gap:12px;background:none;border:0;padding:2px 0;text-align:left;cursor:pointer;color:inherit;font:inherit;min-width:0}
+.rejtg .tt{display:flex;flex-direction:column;min-width:0}.rejtg .tt b{font-size:19px}.rejtg .tt small{font-size:14px;color:#4b5563;font-weight:600}
+.rejtg .chev{margin-left:auto;font-size:22px;transition:transform .2s;color:#92400e}
+.rejp.open .chev{transform:rotate(180deg)}
+.rejall{flex:none;width:auto;min-height:48px;padding:0 18px;font-size:17px}
+.rejl{display:none;max-height:300px;overflow-y:auto;margin-top:10px;flex-direction:column;gap:8px}
+.rejp.open .rejl{display:flex}
+.rj{display:flex;align-items:center;gap:16px;background:#fff;border:1px solid #d6a45a;border-radius:6px;padding:8px 12px}
+.rjm{flex:1}.rjm b{font-size:18px}.rjm small{display:block;font-size:13px;color:#4b5563;font-weight:700}
+.rjb{width:130px;min-height:52px;font-size:18px;flex:none}
+.searching #rej{display:none}
+.toast{position:fixed;top:80px;right:16px;z-index:9;max-width:320px;background:var(--ink);color:#fff;padding:12px 16px;border-radius:8px;font-weight:700;font-size:17px;line-height:1.35;box-shadow:0 3px 10px rgba(0,0,0,.3);cursor:pointer}
+.toast[hidden]{display:none}
+.list button small{line-height:1.35}
+.rt{display:flex;align-items:center;gap:10px;flex:none}
+.stk{font-size:15px;font-weight:700;color:var(--g);background:#eef7f2;border-radius:999px;padding:3px 10px}
+.stk.zero{color:#b91c1c;background:#fee2e2}
+/* ===== tata letak per perangkat: body[data-m] = desktop | tablet | hp (lihat MODE di script) ===== */
+.padc{position:sticky;top:12px}
+.padc .foot{margin-top:14px;align-items:stretch}
+.padc .foot .btn-g{width:100%}
+.padc .err{text-align:center;min-height:0}
+.padc .notebox{margin:0}
+.notebox textarea{min-height:56px;max-height:240px;overflow-y:auto;line-height:1.4;padding-top:14px}
+.selw{max-height:calc(100dvh - 300px);overflow-y:auto;padding-right:4px}
+.sqi{min-height:56px;width:100%;border:1px solid #444;border-radius:6px;background:#fff;padding:0 12px;font-size:20px;font-weight:700}
+.sqi.act,.sqi:focus{border-color:var(--g);outline:3px solid var(--g);outline-offset:-3px}
+.pf .sqi{width:84px;min-height:46px}
+.warn{color:#b91c1c;font-weight:700}
+.big{display:flex;flex-direction:column;align-items:center;justify-content:center}
+.bl span{display:block}
+.lt{display:none}
+.demo summary{cursor:pointer;font-size:14px;color:#6b7280}
+/* numpad hanya untuk tablet */
+.actb,.pad{display:none}
+/* mode mengetik di kolom cari (keyboard bawaan menutup layar) tidak berlaku di desktop */
+body[data-m=desktop] .searching .mid,body[data-m=desktop] .searching .padc{display:block}
+body[data-m=desktop] .searching .cols{grid-template-columns:minmax(280px,.9fr) 1.2fr minmax(260px,.85fr)}
+body[data-m=desktop] .searching .list{height:300px}
+body[data-m=desktop] .searching .foot,body[data-m=desktop] .searching .notebox{display:flex}
+body[data-m=desktop] .searching .notebox[hidden]{display:none}
+body[data-m=desktop] .searching #rej{display:block}
+@media(max-width:900px){
+  .padc{position:static}
+  .padc .foot{position:sticky;bottom:0;z-index:2;background:var(--cream);padding:10px 0 12px;margin-top:6px}
+  .selw{max-height:none}
+}
+/* HP: ringkas. Tanpa numpad, Qty memakai keyboard angka bawaan, Simpan menempel di dasar layar */
+body[data-m=hp]{font-size:15px}
+body[data-m=hp] .hdr{padding:6px 12px;min-height:48px;gap:8px}
+body[data-m=hp] .hdr b{font-size:16px;white-space:nowrap}
+body[data-m=hp] .hdr .pt{font-size:12px;line-height:1.25;margin:0 4px 0 auto;text-align:right}
+body[data-m=hp] .hdr .tb{min-height:36px;padding:0 12px;font-size:14px;border-radius:6px}
+body[data-m=hp] .pg{padding:14px}
+body[data-m=hp] .choices{grid-template-columns:1fr;gap:10px;align-content:start;justify-content:stretch;padding-top:6px}
+body[data-m=hp] .big{width:100%;height:64px;font-size:18px;box-shadow:0 5px 12px rgba(33,90,70,.52),0 1px 3px rgba(33,90,70,.38)}
+body[data-m=hp] .bl span{display:inline}
+body[data-m=hp] .big small{font-size:12px;margin-top:2px}
+/* login */
+body[data-m=hp] .login{padding:44px 24px 24px;justify-content:stretch}
+body[data-m=hp] .card{width:100%;border:0;background:transparent;padding:0;gap:12px}
+body[data-m=hp] .lt{display:block;margin-bottom:10px}
+body[data-m=hp] .lt b{display:block;font-size:24px}
+body[data-m=hp] .lt span{font-size:14px;color:#6b7280}
+body[data-m=hp] label{font-size:14px;margin-bottom:4px}
+body[data-m=hp] .i{min-height:44px;font-size:16px;padding:0 12px;border-radius:8px}
+body[data-m=hp] .btn-g{min-height:44px;font-size:16px;border-radius:8px}
+body[data-m=hp] .chip{min-height:36px;font-size:12px}
+body[data-m=hp] .err{font-size:14px}
+/* form */
+body[data-m=hp] .fh{margin:0;border-radius:0;box-shadow:none;min-height:52px;padding:6px 10px;gap:8px}
+body[data-m=hp] .fh b{font-size:17px;margin:0 auto 0 4px}
+body[data-m=hp] .fh .clk,body[data-m=hp] .whp,body[data-m=hp] .hbt{display:none}
+body[data-m=hp] .fh .who{font-size:13px;margin:0}
+body[data-m=hp] .hb{min-width:40px;min-height:40px;padding:0 8px;justify-content:center;border-width:2px}
+body[data-m=hp] .fb{padding:12px}
+body[data-m=hp] .cols{grid-template-columns:1fr;gap:14px}
+body[data-m=hp] .cols h3,body[data-m=hp] .cols label{font-size:16px;margin-bottom:6px}
+body[data-m=hp] .left .hint{display:none}
+body[data-m=hp] .list{height:230px}
+body[data-m=hp] .list button{min-height:46px;font-size:15px;padding:4px 10px}
+body[data-m=hp] .list button small{font-size:10px}
+body[data-m=hp] .pager{gap:2px;padding:6px 4px}
+body[data-m=hp] .pager .nv{min-height:34px;min-width:48px;font-size:13px}
+body[data-m=hp] .pager .pn{min-width:26px;min-height:34px;font-size:13px}
+body[data-m=hp] .sh,body[data-m=hp] .srow{grid-template-columns:1fr 88px;gap:8px}
+body[data-m=hp] .sh h3{margin:0}
+body[data-m=hp] .selw{min-height:0;padding-right:0}
+body[data-m=hp] .selw p{padding:8px 2px;font-size:14px}
+body[data-m=hp] .sc{min-height:46px;font-size:15px;padding:4px 10px}
+body[data-m=hp] .sx{width:30px;height:30px;font-size:18px}
+body[data-m=hp] .sq,body[data-m=hp] .sqi{min-height:46px;font-size:18px}
+body[data-m=hp] .pf .sqi{min-height:40px;width:76px}
+body[data-m=hp] .prob{padding:6px 8px;gap:8px}
+body[data-m=hp] .it{margin-bottom:8px}
+body[data-m=hp] .notebox textarea{font-size:16px}
+body[data-m=hp] .padc .foot{position:sticky;bottom:0;z-index:3;background:var(--cream);padding:8px 0 10px;margin-top:8px}
+body[data-m=hp] .padc .foot .btn-g{min-height:44px;font-size:16px}
+body[data-m=hp] .rejp,body[data-m=hp] .sun{margin:8px 12px 0;padding:10px 12px}
+body[data-m=hp] .rejt{font-size:16px}
+body[data-m=hp] .rejh{flex-direction:column;gap:8px}
+body[data-m=hp] .rejall{width:100%;min-height:44px;font-size:15px}
+body[data-m=hp] .rejtg .tt b{font-size:16px}body[data-m=hp] .rejtg .tt small{font-size:12px}
+body[data-m=hp] .rj{flex-wrap:wrap;gap:8px}
+body[data-m=hp] .rjb{width:100%;min-height:44px;font-size:16px}
+body[data-m=hp] .cq{font-size:24px;min-width:48px}
+body[data-m=hp] .addbox{border:0;background:none;padding:0;gap:14px}
+body[data-m=hp] .dg{padding:20px;font-size:16px;gap:12px}
+body[data-m=hp] .dg.wide{width:94%;padding:18px}
+body[data-m=hp] .ct b{font-size:16px}
+body[data-m=hp] .ci{padding:10px 12px}
+body[data-m=hp] .dg .btns button{min-height:46px;min-width:110px;font-size:16px!important}
+body[data-m=hp] .toast{left:8px;right:8px;max-width:none;font-size:15px}
+/* ===== HP: ukuran ala Gojek + daftar scroll ===== */
+body[data-m=hp]{font-size:14px}
+body[data-m=hp] .padc{position:static}
+body[data-m=hp] .hdr{min-height:44px;padding:4px 12px}
+body[data-m=hp] .hdr b{font-size:15px}
+body[data-m=hp] .hdr .pt{font-size:11px}
+body[data-m=hp] .hdr .tb{min-height:32px;font-size:13px}
+body[data-m=hp] .fh{min-height:48px}
+body[data-m=hp] .fh b{font-size:16px}
+body[data-m=hp] .fh .who{font-size:12px}
+body[data-m=hp] .hb{min-width:36px;min-height:36px;border-width:1.5px;border-radius:8px}
+body[data-m=hp] .hb svg{width:20px;height:20px}
+body[data-m=hp] .fb{padding:12px;gap:14px}
+body[data-m=hp] .cols{gap:12px}
+body[data-m=hp] .cols h3,body[data-m=hp] .cols label,body[data-m=hp] label{font-size:14px;font-weight:600;margin-bottom:6px}
+body[data-m=hp] .mut{font-size:12px!important}
+body[data-m=hp] .i{min-height:40px;font-size:14px;border-radius:8px}
+body[data-m=hp] textarea.i,body[data-m=hp] .notebox textarea{min-height:48px;font-size:14px;padding:10px 12px}
+body[data-m=hp] .btn-g,body[data-m=hp] .padc .foot .btn-g{min-height:44px;font-size:15px;border-radius:8px}
+body[data-m=hp] .err{font-size:13px}
+body[data-m=hp] .big{height:56px;font-size:15px;border-radius:8px}
+body[data-m=hp] .big small{font-size:11px}
+body[data-m=hp] .list{height:225px}
+body[data-m=hp] .list button{min-height:44px;font-size:14px;padding:4px 10px;border-radius:4px}
+body[data-m=hp] .list button small,body[data-m=hp] .sc small{font-size:11px}
+body[data-m=hp] .list button svg{width:18px;height:18px}
+body[data-m=hp] .stk{font-size:11px;padding:2px 8px}
+body[data-m=hp] .pager .nv{min-height:32px;min-width:44px;font-size:12px}
+body[data-m=hp] .pager .pn{min-width:24px;min-height:32px;font-size:12px}
+body[data-m=hp] .selw{max-height:262px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+body[data-m=hp] .selw:has(.prob){max-height:540px}
+body[data-m=hp] .sc{min-height:44px;font-size:14px;padding:4px 10px;border-radius:4px}
+body[data-m=hp] .sx{width:26px;height:26px;font-size:16px}
+body[data-m=hp] .sq,body[data-m=hp] .sqi{min-height:44px;font-size:16px;border-radius:4px}
+body[data-m=hp] .pf{font-size:13px}
+body[data-m=hp] .pf .sqi{min-height:36px;width:72px;font-size:15px}
+body[data-m=hp] .bk{font-size:13px}
+body[data-m=hp] .cn{font-size:13px}
+body[data-m=hp] .rejt{font-size:14px}
+body[data-m=hp] .rjm b{font-size:15px}
+body[data-m=hp] .rjm small{font-size:11px}
+body[data-m=hp] .rjb{min-height:40px;font-size:14px}
+body[data-m=hp] .dg{font-size:14px}
+body[data-m=hp] .dg b{font-size:18px!important}
+body[data-m=hp] .dg .btns button{min-height:44px;font-size:15px!important}
+body[data-m=hp] .ct b{font-size:15px}
+body[data-m=hp] .cq{font-size:20px}
+body[data-m=hp] .toast{font-size:13px}
+/* HP: jam ringkas di header */
+body[data-m=hp] .fh .clk{display:block;font-size:11px;line-height:1.2;margin:0;white-space:nowrap;color:#374151}
+body[data-m=hp] .fh>b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* HP: kolom catatan menempel di atas keyboard (ala WhatsApp) */
+.ndone{display:none}
+body:not([data-m=desktop]).noting .notebox:not([hidden]){position:fixed;left:0;right:0;bottom:var(--kb,0px);z-index:8;margin:0;padding:8px 10px;background:#fff;border-top:1px solid #d1d5db;box-shadow:0 -2px 8px rgba(0,0,0,.12);display:grid;grid-template-columns:1fr auto;gap:4px 8px;align-items:end}
+body:not([data-m=desktop]).noting .notebox label{grid-column:1/-1;margin:0;font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body:not([data-m=desktop]).noting .notebox textarea{min-height:40px;max-height:120px;border-radius:20px;padding:10px 14px}
+body:not([data-m=desktop]).noting .ndone{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:0 16px;border:0;border-radius:20px;background:var(--g);color:#fff;font-size:14px;font-weight:700;cursor:pointer}
+/* HP: bar Selesai di atas keyboard + ruang scroll di bawah supaya ada area untuk digeser dan diketuk */
+#kbar{display:none}
+.prob .chip{min-height:44px;padding:0 14px}
+body[data-m=hp] .prob .chip{min-height:36px;padding:0 10px;font-size:12px}
+body:not([data-m=desktop]).typing #kbar{display:flex;position:fixed;left:0;right:0;bottom:var(--kb,0px);z-index:8;align-items:center;justify-content:space-between;gap:10px;padding:6px 10px;background:#fff;border-top:1px solid #d1d5db;box-shadow:0 -2px 8px rgba(0,0,0,.12)}
+#kbl{flex:1;min-width:0;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#kbd{min-height:36px;padding:0 16px;border:0;border-radius:18px;background:var(--g);color:#fff;font-size:14px;font-weight:700;cursor:pointer}
+body:not([data-m=desktop]).typing #app,body:not([data-m=desktop]).noting #app{padding-bottom:calc(var(--kb,0px) + 64px)}
+/* ===== TABLET: 2 kolom (cari | pilihan + catatan + Simpan), ukuran sedang, keyboard bawaan ===== */
+body[data-m=tablet]{font-size:16px}
+body[data-m=tablet] .hdr{padding:8px 16px;min-height:56px}
+body[data-m=tablet] .hdr b{font-size:19px}
+body[data-m=tablet] .hdr .pt{font-size:14px}
+body[data-m=tablet] .hdr .tb{min-height:42px;font-size:15px}
+body[data-m=tablet] .pg{padding:20px}
+body[data-m=tablet] .choices{grid-template-columns:repeat(2,230px);gap:20px 24px}
+body[data-m=tablet] .big{width:230px;height:116px;font-size:22px}
+body[data-m=tablet] .big small{font-size:13px}
+body[data-m=tablet] .login{padding:60px 16px}
+body[data-m=tablet] .fh{margin:16px 16px 0;min-height:60px}
+body[data-m=tablet] .fh b{font-size:24px;margin-left:12px}
+body[data-m=tablet] .fh .clk{font-size:13px;margin-right:12px}
+body[data-m=tablet] .fh .who{font-size:16px}
+body[data-m=tablet] .whp{font-size:12px}
+body[data-m=tablet] .hb{min-height:44px;font-size:17px;padding:0 12px;border-width:2px}
+body[data-m=tablet] .fb{padding:20px 16px 24px}
+body[data-m=tablet] .cols{gap:16px 24px}
+@media(min-width:901px){body[data-m=tablet] .cols{grid-template-columns:minmax(260px,.9fr) 1.1fr minmax(240px,.8fr)}}
+body[data-m=tablet] .searching .cols{grid-template-columns:1fr}
+body[data-m=tablet] .searching .list{height:240px}
+body[data-m=tablet] .actb{min-height:50px;font-size:16px;padding:6px 12px}
+body[data-m=tablet] .actb small{font-size:15px}
+body[data-m=tablet] .pad button{min-height:62px;font-size:34px}
+body[data-m=tablet] .pad button.del{font-size:15px}
+body[data-m=tablet] .cols h3,body[data-m=tablet] .cols label{font-size:18px;margin-bottom:6px}
+body[data-m=tablet] .i{min-height:48px;font-size:17px}
+body[data-m=tablet] textarea.i,body[data-m=tablet] .notebox textarea{min-height:48px;font-size:16px;padding:12px 14px}
+body[data-m=tablet] .list{height:372px}
+body[data-m=tablet] .list button{min-height:52px;font-size:16px}
+body[data-m=tablet] .list button small,body[data-m=tablet] .sc small{font-size:12px}
+body[data-m=tablet] .pager .nv{min-height:40px;min-width:56px;font-size:15px}
+body[data-m=tablet] .pager .pn{min-width:32px;min-height:38px;font-size:14px}
+body[data-m=tablet] .sh,body[data-m=tablet] .srow{grid-template-columns:1fr 96px;gap:12px}
+body[data-m=tablet] .selw{min-height:120px}
+body[data-m=tablet] .sc{min-height:52px;font-size:16px}
+body[data-m=tablet] .sq,body[data-m=tablet] .sqi{min-height:52px;font-size:18px}
+body[data-m=tablet] .pf{font-size:15px}
+body[data-m=tablet] .pf .sqi{min-height:44px;width:84px;font-size:17px}
+body[data-m=tablet] .bk,body[data-m=tablet] .cn{font-size:15px}
+body[data-m=tablet] .btn-g{min-height:52px;font-size:18px}
+body[data-m=tablet] .rejp,body[data-m=tablet] .sun{margin:12px 16px 0}
+body[data-m=tablet] .rejt{font-size:18px}
+body[data-m=tablet] .rjm b{font-size:16px}
+body[data-m=tablet] .rjb{width:110px;min-height:46px;font-size:16px}
+body[data-m=tablet] .addbox{padding:22px}
+body[data-m=tablet] .dg{font-size:17px}
+body[data-m=tablet] .dg.wide{width:600px}
+body[data-m=tablet] .ct b{font-size:18px}
+body[data-m=tablet] .cq{font-size:26px}
+body[data-m=tablet] .toast{font-size:15px}
+:focus-visible{outline:3px solid #1d4ed8;outline-offset:2px}
+
+/* REJECT: bar ringkas + layer (datar, tanpa kotak bersarang) */
+.rbar{display:flex;align-items:center;gap:12px;width:100%;background:#fff;border:2px solid #b45309;border-radius:8px;padding:10px 16px;cursor:pointer;color:#111827;font:inherit;text-align:left;box-shadow:0 3px 10px rgba(180,83,9,.25)}
+.rbar .tt{display:flex;flex-direction:column;flex:1;min-width:0}.rbar .tt b{font-size:18px}.rbar .tt small{font-size:15px;color:#374151;font-weight:600}
+.rbar .rejn{background:#b45309}
+.rbar .go{font-weight:700;font-size:16px;color:#b45309;white-space:nowrap}
+.rly{position:fixed;inset:0;z-index:50;background:rgba(15,23,42,.6);display:flex;align-items:center;justify-content:center;padding:20px}
+.rly[hidden]{display:none}
+.rly .pn{background:#fff;color:#111827;border-radius:12px;width:min(600px,100%);max-height:100%;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.rly .hd{display:flex;align-items:flex-start;gap:12px;padding:18px 20px 14px}
+.rly .hd .tt{flex:1}.rly .hd h2{margin:0;font-size:20px}.rly .hd p{margin:4px 0 0;font-size:15px;line-height:1.4;color:#374151}
+.rly .x{flex:none;width:40px;height:40px;border:1px solid #9ca3af;background:#fff;border-radius:8px;font-size:18px;cursor:pointer;color:#111827}
+.rly .tb{display:flex;align-items:center;gap:12px;padding:12px 20px;background:#f3f4f6;border-top:1px solid #d1d5db;border-bottom:1px solid #d1d5db}
+.rly .tb span{flex:1;font-weight:700;font-size:16px;color:#111827}
+.rly .rejall{min-height:44px;padding:0 18px;font-size:16px;width:auto;flex:none}
+.rly .bd{overflow-y:auto;display:flex;flex-direction:column}
+.rg{border-bottom:1px solid #d1d5db}
+.rgh{display:flex;align-items:center;gap:12px;width:100%;background:#fff;border:0;padding:14px 20px;cursor:pointer;text-align:left;color:#111827;font:inherit}
+.rgh .m{flex:1;min-width:0}.rgh .m b{font-size:18px;display:block}.rgh .m small{font-size:15px;color:#4b5563;font-weight:500}
+.rgh .q{font-size:20px;font-weight:700}.rgh .ch{transition:transform .2s;color:#111827;font-size:16px}
+.rg.open .ch{transform:rotate(180deg)}
+.rgb{display:none;background:#f9fafb;border-top:1px solid #e5e7eb;flex-direction:column}
+.rg.open .rgb{display:flex}
+.rly .rj{background:none;border:0;border-radius:0;border-top:1px solid #e5e7eb;padding:12px 20px;gap:14px;flex-wrap:nowrap}
+.rly .rj:first-child{border-top:0}
+.rly .rjm small{font-size:15px;color:#4b5563;font-weight:500}
+.rly .cn{background:none;padding:0;margin-top:4px;font-size:15px;color:#111827}
+.rly .cq{font-size:22px;min-width:48px}
+.rly .rjb{width:100px;min-height:44px;font-size:16px}
+body[data-m=hp] .rly{padding:0;align-items:flex-end}
+body[data-m=hp] .rly .pn{width:100%;max-height:90%;border-radius:14px 14px 0 0}
+body[data-m=hp] .rly .hd{padding:14px 16px 12px}body[data-m=hp] .rly .hd h2{font-size:18px}body[data-m=hp] .rly .hd p{font-size:14px}
+body[data-m=hp] .rly .tb{padding:10px 16px;flex-direction:column;align-items:stretch;gap:8px}body[data-m=hp] .rly .tb span{font-size:15px}
+body[data-m=hp] .rly .rejall{width:100%}
+body[data-m=hp] .rgh{padding:12px 16px}body[data-m=hp] .rgh .m b{font-size:17px}body[data-m=hp] .rgh .m small{font-size:14px}
+body[data-m=hp] .rly .rj{padding:10px 16px;gap:10px}body[data-m=hp] .rly .rjb{width:84px;min-height:42px;font-size:15px}body[data-m=hp] .rly .cq{font-size:20px;min-width:36px}
+body[data-m=hp] .rbar{padding:10px 12px}body[data-m=hp] .rbar .tt b{font-size:16px}body[data-m=hp] .rbar .tt small{font-size:13px}body[data-m=hp] .rbar .go{font-size:14px}
+body[data-m=tablet] .rly .pn{width:min(560px,100%)}
+.toast{z-index:60}
+.nt{display:block;width:100%;margin-top:8px;min-height:44px}
+.nt[hidden]{display:none}
+
+.qhint{margin:8px 16px 0}
+.qblk{display:flex;flex-direction:column;gap:8px;padding:10px 12px;border-radius:10px;margin-top:8px}
+.qblk.ok{background:#eef7f1;border:1px solid #bfe0cb}
+.qblk.bad{background:#fdf1f0;border:1px solid #f0c4c0}
+.qblk.ctl{background:#fff;border:1px solid #cfd4dc}
+body .srow.one{grid-template-columns:1fr}
+.qrow{display:flex;align-items:center;gap:12px;flex-wrap:nowrap}
+.qrow .chip{flex:none;min-height:40px;padding:0 14px;border:0;border-radius:8px;background:var(--g);color:#fff;font-size:14px;font-weight:700}
+.ncp{flex:1 1 0;min-width:0;display:flex;align-items:center;gap:6px;min-height:40px;padding:0 10px;border:1px solid #6b7280;border-radius:8px;background:#fff;color:#111827;font-size:14px;font-weight:600;text-align:left;cursor:pointer}
+.ncp[hidden]{display:none}
+.ncp.kosong{color:#374151}
+.ncp span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ncp svg{flex:none;width:14px;height:14px}
+body[data-m=hp] .qrow .chip{min-height:36px;padding:0 10px;font-size:12px}
+body[data-m=hp] .ncp{min-height:36px;padding:0 8px;font-size:13px}
+.qblk .nt{margin-top:0}
+.bkrow{margin-top:8px}
+.sq small{display:block;font-size:11px;font-weight:600;color:#4b5563;line-height:1}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="ov" class="ov" hidden></div>
+<div id="toast" class="toast" hidden></div>
+
+<!-- DATA (JSON). Nanti ganti dengan fetch ke Laravel. Password hanya untuk demo. -->
+<script type="application/json" id="data">
+{
+ "pts": {
+  "indosteger": {
+   "name": "PT Indosteger Jaya Perkasa",
+   "short": "Indosteger"
+  },
+  "klopmart": {
+   "name": "PT Klopmart",
+   "short": "Klopmart"
+  },
+  "narusafe": {
+   "name": "PT Narusafe NTI",
+   "short": "Narusafe"
+  }
+ },
+ "users": [
+  {
+   "username": "op.indosteger",
+   "password": "gudang123",
+   "name": "Budi",
+   "pt": "indosteger",
+   "role": "operator"
+  },
+  {
+   "username": "qc.indosteger",
+   "password": "gudang123",
+   "name": "Sari",
+   "pt": "indosteger",
+   "role": "qc"
+  },
+  {
+   "username": "op.klopmart",
+   "password": "gudang123",
+   "name": "Joko",
+   "pt": "klopmart",
+   "role": "operator"
+  },
+  {
+   "username": "qc.klopmart",
+   "password": "gudang123",
+   "name": "Rina",
+   "pt": "klopmart",
+   "role": "qc"
+  },
+  {
+   "username": "op.narusafe",
+   "password": "gudang123",
+   "name": "Anton",
+   "pt": "narusafe",
+   "role": "operator"
+  },
+  {
+   "username": "qc.narusafe",
+   "password": "gudang123",
+   "name": "Dewi",
+   "pt": "narusafe",
+   "role": "qc"
+  }
+ ],
+ "items": {
+  "indosteger": [
+   {
+    "sku": "MFP1500",
+    "name": "Mainframe 150 cm",
+    "unit": "pcs"
+   },
+   {
+    "sku": "MFP1700",
+    "name": "Mainframe 170 cm",
+    "unit": "pcs"
+   },
+   {
+    "sku": "MFP1900",
+    "name": "Mainframe 190 cm",
+    "unit": "pcs"
+   },
+   {
+    "sku": "CBP2200",
+    "name": "Crossbrace 220 cm",
+    "unit": "pcs"
+   },
+   {
+    "sku": "LFP900",
+    "name": "Ladder Frame 90 cm",
+    "unit": "pcs"
+   },
+   {
+    "sku": "CBP1930",
+    "name": "Crossbrace 193 cm",
+    "unit": "pcs"
+   },
+   {
+    "sku": "LFP1200",
+    "name": "Ladder Frame 120 cm",
+    "unit": "pcs"
+   },
+   {
+    "sku": "CBP2045",
+    "name": "Crossbrace 204,5 cm",
+    "unit": "pcs"
+   },
+   {
+    "sku": "JPP",
+    "name": "Joint Pin",
+    "unit": "pcs"
+   },
+   {
+    "sku": "CP",
+    "name": "Catwalk",
+    "unit": "pcs"
+   },
+   {
+    "sku": "TP170",
+    "name": "Tangga 170 cm",
+    "unit": "pcs"
+   },
+   {
+    "sku": "TP190",
+    "name": "Tangga 190 cm",
+    "unit": "pcs"
+   },
+   {
+    "sku": "HFP",
+    "name": "Horizontal Frame",
+    "unit": "pcs"
+   },
+   {
+    "sku": "SP3000",
+    "name": "Stabilizer 3 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "ALP170",
+    "name": "Armlock 170",
+    "unit": "pcs"
+   },
+   {
+    "sku": "ALP190",
+    "name": "Armlock 190",
+    "unit": "pcs"
+   },
+   {
+    "sku": "JB60D32",
+    "name": "Jackbase 60 cm D 32",
+    "unit": "pcs"
+   },
+   {
+    "sku": "UH60D32",
+    "name": "U-head 60 cm D 32",
+    "unit": "pcs"
+   },
+   {
+    "sku": "R6KR",
+    "name": "Roda 6\" KARET REM",
+    "unit": "pcs"
+   },
+   {
+    "sku": "R6KM",
+    "name": "Roda 6\" KARET Mati",
+    "unit": "pcs"
+   },
+   {
+    "sku": "R6NR",
+    "name": "Roda 6\" Nylon REM",
+    "unit": "pcs"
+   },
+   {
+    "sku": "R6NM",
+    "name": "Roda 6\" Nylon Mati",
+    "unit": "pcs"
+   },
+   {
+    "sku": "MFG1500",
+    "name": "Mainframe 150 cm Galvanis",
+    "unit": "pcs"
+   },
+   {
+    "sku": "MFG1700",
+    "name": "Mainframe 170 cm Galvanis",
+    "unit": "pcs"
+   },
+   {
+    "sku": "MFG1900",
+    "name": "Mainframe 190 cm Galvanis",
+    "unit": "pcs"
+   },
+   {
+    "sku": "CBG2200",
+    "name": "Crossbrace 220 cm Galvanis",
+    "unit": "pcs"
+   },
+   {
+    "sku": "LFG900",
+    "name": "Ladder Frame 90 cm Galvanis",
+    "unit": "pcs"
+   },
+   {
+    "sku": "CBG1930",
+    "name": "Crossbrace 193 cm Galvanis",
+    "unit": "pcs"
+   },
+   {
+    "sku": "LFG1200",
+    "name": "Ladder Frame 120 cm Galvanis",
+    "unit": "pcs"
+   },
+   {
+    "sku": "CBG2045",
+    "name": "Crossbrace 204,5 cm Galvanis",
+    "unit": "pcs"
+   },
+   {
+    "sku": "JPG",
+    "name": "Joint Pin Galvanis",
+    "unit": "pcs"
+   },
+   {
+    "sku": "CG",
+    "name": "Catwalk Galvanis",
+    "unit": "pcs"
+   },
+   {
+    "sku": "CMPG",
+    "name": "Catwalk Metal Plank Galvanis",
+    "unit": "pcs"
+   },
+   {
+    "sku": "TG170",
+    "name": "Tangga 170 cm Galvanis",
+    "unit": "pcs"
+   },
+   {
+    "sku": "TG190",
+    "name": "Tangga 190 cm Galvanis",
+    "unit": "pcs"
+   },
+   {
+    "sku": "HFG",
+    "name": "Horizontal Frame Galvanis",
+    "unit": "pcs"
+   },
+   {
+    "sku": "SG3000",
+    "name": "Stabilizer 3 Meter Galvanis",
+    "unit": "pcs"
+   },
+   {
+    "sku": "ALG170",
+    "name": "Armlock 170 Galvanis",
+    "unit": "pcs"
+   },
+   {
+    "sku": "ALG190",
+    "name": "Armlock 190 Galvanis",
+    "unit": "pcs"
+   },
+   {
+    "sku": "PSL",
+    "name": "Pipa Support Lengkap",
+    "unit": "pcs"
+   },
+   {
+    "sku": "TR100",
+    "name": "Tie Rod 1 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "TR120",
+    "name": "Tie Rod 1,2 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "TR200",
+    "name": "Tie Rod 2 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "TR300",
+    "name": "Tie Rod 3 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "TR400",
+    "name": "Tie Rod 4 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "TR500",
+    "name": "Tie Rod 5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "TR600",
+    "name": "Tie Rod 6 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "WGNT",
+    "name": "Wingnut",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1524050",
+    "name": "Pipa Galvanis 1 1/2\" x 2,4 mm x 0,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1524100",
+    "name": "Pipa Galvanis 1 1/2\" x 2,4 mm x 1 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1524150",
+    "name": "Pipa Galvanis 1 1/2\" x 2,4 mm x 1,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1524200",
+    "name": "Pipa Galvanis 1 1/2\" x 2,4 mm x 2 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1524250",
+    "name": "Pipa Galvanis 1 1/2\" x 2,4 mm x 2,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1524300",
+    "name": "Pipa Galvanis 1 1/2\" x 2,4 mm x 3 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1524350",
+    "name": "Pipa Galvanis 1 1/2\" x 2,4 mm x 3,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1524400",
+    "name": "Pipa Galvanis 1 1/2\" x 2,4 mm x 4 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1524450",
+    "name": "Pipa Galvanis 1 1/2\" x 2,4 mm x 4,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1524500",
+    "name": "Pipa Galvanis 1 1/2\" x 2,4 mm x 5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1524550",
+    "name": "Pipa Galvanis 1 1/2\" x 2,4 mm x 5,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1524600",
+    "name": "Pipa Galvanis 1 1/2\" x 2,4 mm x 6 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "JISCS",
+    "name": "JIS Clamp Hidup ( Swivel )",
+    "unit": "pcs"
+   },
+   {
+    "sku": "JISCF",
+    "name": "JIS Clamp Mati ( Fixed )",
+    "unit": "pcs"
+   },
+   {
+    "sku": "JISCFB",
+    "name": "JIS Clamp Hidup Beam ( Swivel Beam )",
+    "unit": "pcs"
+   },
+   {
+    "sku": "JISCSB",
+    "name": "JIS Clamp Mati Beam ( Fixed Beam )",
+    "unit": "pcs"
+   },
+   {
+    "sku": "JISIJP",
+    "name": "JIS Inner Joint Pin 2,5 mm",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1503600",
+    "name": "Pipa Galvanis 1 1/2\" x 3 mm x 6 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1532050",
+    "name": "Pipa Galvanis 1 1/2\" x 3,2 mm x 0,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1532100",
+    "name": "Pipa Galvanis 1 1/2\" x 3,2 mm x 1 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1532150",
+    "name": "Pipa Galvanis 1 1/2\" x 3,2 mm x 1,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1532200",
+    "name": "Pipa Galvanis 1 1/2\" x 3,2 mm x 2 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1532250",
+    "name": "Pipa Galvanis 1 1/2\" x 3,2 mm x 2,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1532300",
+    "name": "Pipa Galvanis 1 1/2\" x 3,2 mm x 3 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1532350",
+    "name": "Pipa Galvanis 1 1/2\" x 3,2 mm x 3,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1532400",
+    "name": "Pipa Galvanis 1 1/2\" x 3,2 mm x 4 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1532450",
+    "name": "Pipa Galvanis 1 1/2\" x 3,2 mm x 4,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1532500",
+    "name": "Pipa Galvanis 1 1/2\" x 3,2 mm x 5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1532550",
+    "name": "Pipa Galvanis 1 1/2\" x 3,2 mm x 5,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1532600",
+    "name": "Pipa Galvanis 1 1/2\" x 3,2 mm x 6 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1504050",
+    "name": "Pipa Galvanis 1 1/2\" x 4 mm x 0,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1504100",
+    "name": "Pipa Galvanis 1 1/2\" x 4 mm x 1 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1504150",
+    "name": "Pipa Galvanis 1 1/2\" x 4 mm x 1,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1504200",
+    "name": "Pipa Galvanis 1 1/2\" x 4 mm x 2 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1504250",
+    "name": "Pipa Galvanis 1 1/2\" x 4 mm x 2,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1504300",
+    "name": "Pipa Galvanis 1 1/2\" x 4 mm x 3 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1504350",
+    "name": "Pipa Galvanis 1 1/2\" x 4 mm x 3,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1504400",
+    "name": "Pipa Galvanis 1 1/2\" x 4 mm x 4 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1504450",
+    "name": "Pipa Galvanis 1 1/2\" x 4 mm x 4,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1504500",
+    "name": "Pipa Galvanis 1 1/2\" x 4 mm x 5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1504550",
+    "name": "Pipa Galvanis 1 1/2\" x 4 mm x 5,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1504600",
+    "name": "Pipa Galvanis 1 1/2\" x 4 mm x 6 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSDFFC",
+    "name": "BS Drop Forged Fixed / Double Coupler",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSDFSC",
+    "name": "BS Drop Forged Swivel Coupler",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSDFFBC",
+    "name": "BS Drop Forged Fixed Beam / Girder Coupler",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSDFSBC",
+    "name": "BS Drop Forged Swivel Beam / Girder Coupler",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSPSFC",
+    "name": "BS Pressed Steel Fixed / Double Coupler",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSPSSC",
+    "name": "BS Pressed Steel Swivel Coupler",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSDFIJP",
+    "name": "BS Drop Forged Inner Joint Pin",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSSC",
+    "name": "BS Sleeve Coupler",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSBRC04",
+    "name": "BS Board Retaining Coupler 4 cm",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSBRC05",
+    "name": "BS Board Retaining Coupler 5 cm",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSPC",
+    "name": "BS Putlog Coupler",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSLC",
+    "name": "BS Ladder Clamp",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSJB60D38H",
+    "name": "BS Jackbase System 60 cm D 38",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSUH60D38H",
+    "name": "BS Uhead System 60 cm D 38",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSMP01",
+    "name": "Metal Plank 1 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSMP02",
+    "name": "Metal Plank 2 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSMP03",
+    "name": "Metal Plank 3 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSMP04",
+    "name": "Metal Plank 4 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSB150",
+    "name": "Baseplate besar 150 x 150 x 15",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSTA03",
+    "name": "Tangga Alumunium 3 meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSTA04",
+    "name": "Tangga Alumunium 4 meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSTA05",
+    "name": "Tangga Alumunium 5 meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSTA06",
+    "name": "Tangga Alumunium 6 meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSWR1922",
+    "name": "Wrench Rachet 19 - 22",
+    "unit": "pcs"
+   },
+   {
+    "sku": "R8PR",
+    "name": "Roda 8\" Poly Rem",
+    "unit": "pcs"
+   },
+   {
+    "sku": "RSST",
+    "name": "Rosette",
+    "unit": "pcs"
+   },
+   {
+    "sku": "LH",
+    "name": "Ledger Head",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BHL",
+    "name": "Bracing Head kiri",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BHR",
+    "name": "Bracing Head kanan",
+    "unit": "pcs"
+   },
+   {
+    "sku": "WG",
+    "name": "Wedge",
+    "unit": "pcs"
+   },
+   {
+    "sku": "PJWG",
+    "name": "Paku jembatan utk Wedge",
+    "unit": "pcs"
+   },
+   {
+    "sku": "PJWGH",
+    "name": "Paku jembatan utk Wedge ( Hitam )",
+    "unit": "pcs"
+   },
+   {
+    "sku": "PJBH",
+    "name": "Paku Jembatan utk Bracing",
+    "unit": "pcs"
+   },
+   {
+    "sku": "LP",
+    "name": "Locking Pin",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSBWG",
+    "name": "Kawat BWG",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSSB",
+    "name": "Soleboard",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSCP",
+    "name": "Cover Pipa",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSST",
+    "name": "Scaffolding Tag",
+    "unit": "pcs"
+   },
+   {
+    "sku": "JISLB300",
+    "name": "JIS Ladder Beam 3 Meter ( 3,2 - 2,4 )",
+    "unit": "pcs"
+   },
+   {
+    "sku": "JISLB600",
+    "name": "JIS Ladder Beam 6 Meter ( 3,2 - 2,4 )",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSLB300",
+    "name": "BS Ladder Beam 3 Meter ( 3,2 - 3,2 )",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSLB600",
+    "name": "BS Ladder Beam 6 Meter ( 3,2 - 3,2 )",
+    "unit": "pcs"
+   },
+   {
+    "sku": "SKSS100",
+    "name": "Sabuk Kolom / Suri Suri 1 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "SKSS150",
+    "name": "Sabuk Kolom / Suri Suri 1,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "SKSS200",
+    "name": "Sabuk Kolom / Suri Suri 2 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "PSPL02",
+    "name": "Push Pull 2 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "PSPLK01",
+    "name": "Kicker 1 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "PSPLMB",
+    "name": "Monas Base",
+    "unit": "pcs"
+   },
+   {
+    "sku": "PSPLWG",
+    "name": "Baji Push Pull",
+    "unit": "pcs"
+   },
+   {
+    "sku": "PSPLBP",
+    "name": "Baseplate Push Pull",
+    "unit": "pcs"
+   },
+   {
+    "sku": "SIKU4030",
+    "name": "Siku 40 x 30",
+    "unit": "pcs"
+   },
+   {
+    "sku": "H5050200",
+    "name": "Hollo 50 x 50 x 3 mm x 2 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "H5050300",
+    "name": "Hollo 50 x 50 x 3 mm x 3 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "H5050600",
+    "name": "Hollo 50 x 50 x 3 mm x 6 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSWR1721",
+    "name": "Wrench Rachet 17 - 21",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSRLV1500",
+    "name": "Ringlock Vertical 1500",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSRLV2000",
+    "name": "Ringlock Vertical 2000",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSRLV2500",
+    "name": "Ringlock Vertical 2500",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSRLH1219",
+    "name": "Ringlock Horizontal 1219",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSRLH1829",
+    "name": "Ringlock Horizontal 1829",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSRLB12192000",
+    "name": "Ringlock Diagonal 1219 x 2000",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSRLB18292000",
+    "name": "Ringlock Diagonal 1829 x 2000",
+    "unit": "pcs"
+   },
+   {
+    "sku": "STB",
+    "name": "Scaffolding Tolls Belt",
+    "unit": "pcs"
+   }
+  ],
+  "klopmart": [
+   {
+    "sku": "KLP-01",
+    "name": "Triplek 6 mm MC",
+    "unit": "lembar"
+   },
+   {
+    "sku": "KLP-02",
+    "name": "Triplek 8 mm MC",
+    "unit": "lembar"
+   },
+   {
+    "sku": "KLP-03",
+    "name": "Triplek 9 mm MC",
+    "unit": "lembar"
+   },
+   {
+    "sku": "KLP-04",
+    "name": "Triplek 15 mm MC",
+    "unit": "lembar"
+   },
+   {
+    "sku": "KLP-05",
+    "name": "Triplek 12 mm MC",
+    "unit": "lembar"
+   },
+   {
+    "sku": "KLP-06",
+    "name": "Triplek 9 mm BBCC Merah",
+    "unit": "lembar"
+   },
+   {
+    "sku": "KLP-07",
+    "name": "Block Board 18 mm",
+    "unit": "lembar"
+   },
+   {
+    "sku": "KLP-08",
+    "name": "Triplek Film 18mm x 4Ft x 8Ft 1 Muka",
+    "unit": "lembar"
+   },
+   {
+    "sku": "KLP-09",
+    "name": "GRC Superpanel",
+    "unit": "lembar"
+   },
+   {
+    "sku": "KLP-10",
+    "name": "MU 400 - 25 kg Granit Fix",
+    "unit": "bag"
+   },
+   {
+    "sku": "KLP-11",
+    "name": "MU 200 - 40 kg Skin Wall",
+    "unit": "bag"
+   },
+   {
+    "sku": "KLP-12",
+    "name": "Pipa Scaff Galv 3,2 mm 1,5 inc Pjg 6 m",
+    "unit": "batang"
+   },
+   {
+    "sku": "KLP-13",
+    "name": "MU 420 - 25 kg Cerafix",
+    "unit": "bag"
+   },
+   {
+    "sku": "KLP-14",
+    "name": "MU 301 - 40 kg Plaster Plus",
+    "unit": "bag"
+   },
+   {
+    "sku": "KLP-15",
+    "name": "MU 480 - 25 kg Renofix LowDust",
+    "unit": "bag"
+   },
+   {
+    "sku": "KLP-16",
+    "name": "MU-380 Thinbedmax - 40 Kg",
+    "unit": "bag"
+   },
+   {
+    "sku": "KLP-17",
+    "name": "Pipa Scaffolding Galvanis 4mm x 6M",
+    "unit": "btg"
+   },
+   {
+    "sku": "KLP-18",
+    "name": "Plank Asiba / Metal Plank 3 Meter",
+    "unit": "btg"
+   },
+   {
+    "sku": "KLP-19",
+    "name": "Scaffolding Set Galvanis - Steger 1,90",
+    "unit": "set"
+   },
+   {
+    "sku": "KLP-20",
+    "name": "Catwalk Galvanis Scaffolding",
+    "unit": "pcs"
+   },
+   {
+    "sku": "KLP-21",
+    "name": "Jack Base Scaffolding 0.60 Dia 38mm",
+    "unit": "pcs"
+   },
+   {
+    "sku": "KLP-22",
+    "name": "Sikatop Seal 107 2 Komponen",
+    "unit": "set"
+   },
+   {
+    "sku": "KLP-23",
+    "name": "Mortar AKA 10 50 Kg",
+    "unit": "bag"
+   },
+   {
+    "sku": "KLP-24",
+    "name": "Drop Forged Swivel Coupler Bs",
+    "unit": "pcs"
+   },
+   {
+    "sku": "KLP-25",
+    "name": "Drop Forged Fixed Coupler Bs",
+    "unit": "pcs"
+   },
+   {
+    "sku": "KLP-26",
+    "name": "Plank Asiba 2 Mtr",
+    "unit": "pcs"
+   },
+   {
+    "sku": "KLP-27",
+    "name": "Sleeve Coupler Bs",
+    "unit": "pcs"
+   },
+   {
+    "sku": "KLP-28",
+    "name": "Base Plate Scaffolding",
+    "unit": "pcs"
+   },
+   {
+    "sku": "KLP-29",
+    "name": "Besi SNI KS P 8mm TP280B - Tekuk",
+    "unit": "pcs"
+   },
+   {
+    "sku": "KLP-30",
+    "name": "Besi SNI KS P 12mm TP280B - Tekuk",
+    "unit": "pcs"
+   },
+   {
+    "sku": "KLP-31",
+    "name": "Triplek Film 18mm x 4Ft x 8Ft 1 Muka",
+    "unit": "lbr"
+   },
+   {
+    "sku": "KLP-32",
+    "name": "Paku Seri Cap Roket 7 cm",
+    "unit": "dus"
+   },
+   {
+    "sku": "KLP-33",
+    "name": "Paku Seri Cap Roket 5 cm",
+    "unit": "dus"
+   },
+   {
+    "sku": "KLP-34",
+    "name": "Triplek 12 mm 4x8 EXPORT",
+    "unit": "lembar"
+   },
+   {
+    "sku": "KLP-35",
+    "name": "Triplek 9 mm 4x8 FULL EXPORT",
+    "unit": "lembar"
+   },
+   {
+    "sku": "KLP-36",
+    "name": "Scaffolding Tangga Aluminium Ladder 5 Mtr",
+    "unit": "pcs"
+   },
+   {
+    "sku": "KLP-37",
+    "name": "Besi Hollow HRC 50 X 50 X 1,9MM X 6000MM (K)",
+    "unit": "al"
+   },
+   {
+    "sku": "KLP-38",
+    "name": "JOINT PIN",
+    "unit": "pcs"
+   },
+   {
+    "sku": "KLP-39",
+    "name": "Alderon 830 Semitransparant U K 6 Meter",
+    "unit": "lembar"
+   },
+   {
+    "sku": "KLP-40",
+    "name": "Roofing Alderon Putih @ 20 Pcs",
+    "unit": "dus"
+   },
+   {
+    "sku": "KLP-41",
+    "name": "Skrup SDS FH 10x32 @ 500 Pcs",
+    "unit": "pcs"
+   },
+   {
+    "sku": "KLP-42",
+    "name": "Skrup Hitam Dry Wall Screw M 8x2 @ 1000 Pcs",
+    "unit": "pcs"
+   },
+   {
+    "sku": "KLP-43",
+    "name": "Scaffolding Set Painted - Steger 1,70",
+    "unit": "set"
+   },
+   {
+    "sku": "KLP-44",
+    "name": "Catwalk Scaffolding - Biasa",
+    "unit": "pcs"
+   },
+   {
+    "sku": "KLP-45",
+    "name": "Tangga / Stair Scaffolding - ukuran 1,70 Painted",
+    "unit": "pcs"
+   },
+   {
+    "sku": "KLP-46",
+    "name": "Roda Karet Scaffolding 6 Inch per Set",
+    "unit": "set"
+   },
+   {
+    "sku": "KLP-47",
+    "name": "Plank Asiba 1 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "KLP-48",
+    "name": "Cross Brace Galvanis 2.20m",
+    "unit": "pcs"
+   },
+   {
+    "sku": "KLP-49",
+    "name": "Triplek 18 mm BBCC Merah",
+    "unit": "pcs"
+   },
+   {
+    "sku": "KLP-50",
+    "name": "Baja Profil CNP 125X50X20X2,3mm x 6M Length, Kw",
+    "unit": "pcs"
+   },
+   {
+    "sku": "KLP-51",
+    "name": "U-Head Jack Base Scaffolding 0.60 Dia 32mm",
+    "unit": "pcs"
+   },
+   {
+    "sku": "KLP-52",
+    "name": "Scaffolding Set Galvanis - Steger 1,90",
+    "unit": "set"
+   },
+   {
+    "sku": "KLP-53",
+    "name": "Scaffolding Set Galvanis - Steger 1,70",
+    "unit": "set"
+   },
+   {
+    "sku": "KLP-54",
+    "name": "Scaffolding Set Galvanis - Steger 0,90",
+    "unit": "set"
+   },
+   {
+    "sku": "KLP-55",
+    "name": "Wiremesh 10 mm",
+    "unit": "pcs"
+   },
+   {
+    "sku": "KLP-56",
+    "name": "Alderon Double Layer (twinwall)830-P.3m Transclucent",
+    "unit": "lembar"
+   },
+   {
+    "sku": "KLP-57",
+    "name": "Weatherseal Alderon Baut Roofing 7,5 Cm",
+    "unit": "dus"
+   },
+   {
+    "sku": "KLP-58",
+    "name": "Blok Melamin 18MM BBCC SF",
+    "unit": "lembar"
+   },
+   {
+    "sku": "KLP-59",
+    "name": "MU 100 - 40 kg Premium Plaster",
+    "unit": "bag"
+   },
+   {
+    "sku": "KLP-60",
+    "name": "Aluminium Straight Ladder, 10 Step, 3 Meter",
+    "unit": "ea"
+   },
+   {
+    "sku": "KLP-61",
+    "name": "Aluminium Straight Ladder, 20 Step, 6 Meter",
+    "unit": "ea"
+   },
+   {
+    "sku": "KLP-62",
+    "name": "Metal Plank 4 meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "KLP-63",
+    "name": "Roda Nilon Scaffolding 6 Inch per Set",
+    "unit": "set"
+   },
+   {
+    "sku": "KLP-64",
+    "name": "Triplek 18mm BBCC Putih 4x8",
+    "unit": "lembar"
+   },
+   {
+    "sku": "KLP-65",
+    "name": "Paku kayu Cap Roket 7 Cm",
+    "unit": "dus"
+   },
+   {
+    "sku": "KLP-66",
+    "name": "Gypsum Yoshino 9mm",
+    "unit": "lembar"
+   },
+   {
+    "sku": "KLP-67",
+    "name": "Accessories Gypsum Snp Stud 0,35mm",
+    "unit": "batang"
+   },
+   {
+    "sku": "KLP-68",
+    "name": "Accessories Gypsum Snp U-runner 0,35 Mm",
+    "unit": "pcs"
+   },
+   {
+    "sku": "KLP-69",
+    "name": "Access Gypsum Steel Skrup Gypsum 2,5Cm - 6 x 1inc",
+    "unit": "box"
+   },
+   {
+    "sku": "KLP-70",
+    "name": "Rifeng Pipe High Temp Resistant 1/2\" x 1 Mtr B1216",
+    "unit": "meter"
+   },
+   {
+    "sku": "KLP-71",
+    "name": "Clamp Swivel Scaffolding JIS",
+    "unit": "pcs"
+   },
+   {
+    "sku": "KLP-72",
+    "name": "Frame Scaffolding Horizontal 1m x 1,8m Painted",
+    "unit": "pcs"
+   },
+   {
+    "sku": "KLP-73",
+    "name": "TASO (t5) C75.100 X 6000 MM",
+    "unit": "pcs"
+   },
+   {
+    "sku": "KLP-74",
+    "name": "BAJA PROFIL CNP 100X50X20X2",
+    "unit": "pcs"
+   },
+   {
+    "sku": "KLP-75",
+    "name": "BAJA PROFIL L 50 SNI",
+    "unit": "pcs"
+   },
+   {
+    "sku": "KLP-76",
+    "name": "PLATE 8MM",
+    "unit": "sheet"
+   }
+  ],
+  "narusafe": [
+   {
+    "sku": "MFP1500",
+    "name": "Mainframe 150 cm",
+    "unit": "pcs"
+   },
+   {
+    "sku": "MFP1700",
+    "name": "Mainframe 170 cm",
+    "unit": "pcs"
+   },
+   {
+    "sku": "MFP1900",
+    "name": "Mainframe 190 cm",
+    "unit": "pcs"
+   },
+   {
+    "sku": "CBP2200",
+    "name": "Crossbrace 220 cm",
+    "unit": "pcs"
+   },
+   {
+    "sku": "LFP900",
+    "name": "Ladder Frame 90 cm",
+    "unit": "pcs"
+   },
+   {
+    "sku": "CBP1930",
+    "name": "Crossbrace 193 cm",
+    "unit": "pcs"
+   },
+   {
+    "sku": "JPP",
+    "name": "Joint pin",
+    "unit": "pcs"
+   },
+   {
+    "sku": "CP",
+    "name": "Catwalk",
+    "unit": "pcs"
+   },
+   {
+    "sku": "TP170",
+    "name": "Tangga 170 cm",
+    "unit": "pcs"
+   },
+   {
+    "sku": "TP190",
+    "name": "Tangga 190 cm",
+    "unit": "pcs"
+   },
+   {
+    "sku": "HFP",
+    "name": "Horizontal Frame",
+    "unit": "pcs"
+   },
+   {
+    "sku": "SP3000",
+    "name": "Stabilizer 3 meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "JB40D32",
+    "name": "Jackbase 40 cm D32",
+    "unit": "pcs"
+   },
+   {
+    "sku": "UH40D32",
+    "name": "U head 40 cm D32",
+    "unit": "pcs"
+   },
+   {
+    "sku": "JB60D32",
+    "name": "Jackbase 60 cm D32",
+    "unit": "pcs"
+   },
+   {
+    "sku": "UH60D32",
+    "name": "U head 60 cm D32",
+    "unit": "pcs"
+   },
+   {
+    "sku": "R6KM",
+    "name": "Roda KARET Mati",
+    "unit": "pcs"
+   },
+   {
+    "sku": "R6KR",
+    "name": "Roda KARET Rem",
+    "unit": "pcs"
+   },
+   {
+    "sku": "R6NM",
+    "name": "Roda NYLON Mati",
+    "unit": "pcs"
+   },
+   {
+    "sku": "R6NR",
+    "name": "Roda NYLON Rem",
+    "unit": "pcs"
+   },
+   {
+    "sku": "MFG1700",
+    "name": "Mainframe GALVANIS 170 cm",
+    "unit": "pcs"
+   },
+   {
+    "sku": "MFG1900",
+    "name": "Mainframe GALVANIS 190 cm",
+    "unit": "pcs"
+   },
+   {
+    "sku": "CBG2200",
+    "name": "Cross brace GALVANIS 220 cm",
+    "unit": "pcs"
+   },
+   {
+    "sku": "LFG900",
+    "name": "Ladder Frame GALVANIS 90 cm",
+    "unit": "pcs"
+   },
+   {
+    "sku": "CBG1930",
+    "name": "Cross brace GALVANIS 193 cm",
+    "unit": "pcs"
+   },
+   {
+    "sku": "JPG",
+    "name": "Joint pin GALVANIS",
+    "unit": "pcs"
+   },
+   {
+    "sku": "CG",
+    "name": "Catwalk GALVANIS",
+    "unit": "pcs"
+   },
+   {
+    "sku": "TG170",
+    "name": "Tangga GALVANIS 170 cm",
+    "unit": "pcs"
+   },
+   {
+    "sku": "TG190",
+    "name": "Tangga GALVANIS 190 cm",
+    "unit": "pcs"
+   },
+   {
+    "sku": "PSL",
+    "name": "Pipa Support LENGKAP",
+    "unit": "pcs"
+   },
+   {
+    "sku": "PSCWK",
+    "name": "Pipa Support CEWEK",
+    "unit": "pcs"
+   },
+   {
+    "sku": "PSCWOK",
+    "name": "Pipa Support COWOK",
+    "unit": "pcs"
+   },
+   {
+    "sku": "KPSL",
+    "name": "Kunci Pipa Support",
+    "unit": "pcs"
+   },
+   {
+    "sku": "TRT",
+    "name": "Tierod T",
+    "unit": "pcs"
+   },
+   {
+    "sku": "TRP",
+    "name": "Tierod Payung",
+    "unit": "pcs"
+   },
+   {
+    "sku": "TR100",
+    "name": "Tierod 1 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "TR120",
+    "name": "Tierod 1,2 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "TR150",
+    "name": "Tierod 1,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "TR300",
+    "name": "Tierod 2 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "WGNT",
+    "name": "Wingnut",
+    "unit": "pcs"
+   },
+   {
+    "sku": "12518100H",
+    "name": "Pipa Stood hitam 1 1/4\" x 1,8 mm x 1 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "12518150H",
+    "name": "Pipa Stood hitam 1 1/4\" x 1,8 mm x 1,5 meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "12518200H",
+    "name": "Pipa Stood hitam 1 1/4\" x 1,8 mm x 2 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "12518250H",
+    "name": "Pipa Stood hitam 1 1/4\" x 1,8 mm x 2,5 meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "12518300H",
+    "name": "Pipa Stood hitam 1 1/4\" x 1,8 mm x 3 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "12518350H",
+    "name": "Pipa Stood hitam 1 1/4\" x 1,8 mm x 3,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "12518400H",
+    "name": "Pipa Stood hitam 1 1/4\" x 1,8 mm x 4 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "12518450H",
+    "name": "Pipa Stood hitam 1 1/4\" x 1,8 mm x 4,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "12518500H",
+    "name": "Pipa Stood hitam 1 1/4\" x 1,8 mm x 5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "12518550H",
+    "name": "Pipa Stood hitam 1 1/4\" x 1,8 mm x 5,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "12518600H",
+    "name": "Pipa Stood hitam 1 1/4\" x 1,8 mm x 6 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1518100H",
+    "name": "pipa stood hitam 1 1/2\" x 1,8 mm x 1 meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1518150H",
+    "name": "pipa stood hitam 1 1/2\" x 1,8 mm x 1,5 meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1518200H",
+    "name": "pipa stood hitam 1 1/2\" x 1,8 mm x 2 meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1518250H",
+    "name": "pipa stood hitam 1 1/2\" x 1,8 mm x 2,5 meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1518300H",
+    "name": "pipa stood hitam 1 1/2\" x 1,8 mm x 3 meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1518350H",
+    "name": "pipa stood hitam 1 1/2\" x 1,8 mm x 3,5 meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1518400H",
+    "name": "pipa stood hitam 1 1/2\" x 1,8 mm x 4 meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1518450H",
+    "name": "pipa stood hitam 1 1/2\" x 1,8 mm x 4,5 meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1518500H",
+    "name": "pipa stood hitam 1 1/2\" x 1,8 mm x 5 meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1518550H",
+    "name": "pipa stood hitam 1 1/2\" x 1,8 mm x 5,5 meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1518600H",
+    "name": "pipa stood hitam 1 1/2\" x 1,8 mm x 6 meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1524100H",
+    "name": "pipa stood hitam 1 1/2\" x 2,4 mm x 1 meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1524150H",
+    "name": "pipa stood hitam 1 1/2\" x 2,4 mm x 1,5 meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1524200H",
+    "name": "pipa stood hitam 1 1/2\" x 2,4 mm x 2 meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1524600H",
+    "name": "pipa stood hitam 1 1/2\" x 2,4 mm x 6 meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1532200H",
+    "name": "pipa stood hitam 1 1/2\" x 3,2 mm x 2 meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1532600H",
+    "name": "pipa stood hitam 1 1/2\" x 3,2 mm x 6 meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "12512400G",
+    "name": "Pipa Stood Galvanis 1 1/4\" x 1,2 mm x 4 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "12518100G",
+    "name": "Pipa Stood Galvanis 1 1/4\" x 1,8 mm x 1 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "12518150G",
+    "name": "Pipa Stood Galvanis 1 1/4\" x 1,8 mm x 1,5 meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "12518200G",
+    "name": "Pipa Stood Galvanis 1 1/4\" x 1,8 mm x 2 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "12518250G",
+    "name": "Pipa Stood Galvanis 1 1/4\" x 1,8 mm x 2,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "12518300G",
+    "name": "Pipa Stood Galvanis 1 1/4\" x 1,8 mm x 3 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "12518350G",
+    "name": "Pipa Stood Galvanis 1 1/4\" x 1,8 mm x 3,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "12518400G",
+    "name": "Pipa Stood Galvanis 1 1/4\" x 1,8 mm x 4 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "12518450G",
+    "name": "Pipa Stood Galvanis 1 1/4\" x 1,8 mm x 4,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "12518500G",
+    "name": "Pipa Stood Galvanis 1 1/4\" x 1,8 mm x 5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "12518550G",
+    "name": "Pipa Stood Galvanis 1 1/4\" x 1,8 mm x 5,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "12518600G",
+    "name": "Pipa Stood Galvanis 1 1/4\" x 1,8 mm x 6 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1518100G",
+    "name": "Pipa Stood Galvanis 1 1/2\" x 1,8 mm x 1 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1518150G",
+    "name": "Pipa Stood Galvanis 1 1/2\" x 1,8 mm x 1,5 meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1518200G",
+    "name": "Pipa Stood Galvanis 1 1/2\" x 1,8 mm x 2 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1518250G",
+    "name": "Pipa Stood Galvanis 1 1/2\" x 1,8 mm x 2,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1518300G",
+    "name": "Pipa Stood Galvanis 1 1/2\" x 1,8 mm x 3 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1518350G",
+    "name": "Pipa Stood Galvanis 1 1/2\" x 1,8 mm x 3,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1518400G",
+    "name": "Pipa Stood Galvanis 1 1/2\" x 1,8 mm x 4 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1518450G",
+    "name": "Pipa Stood Galvanis 1 1/2\" x 1,8 mm x 4,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1518500G",
+    "name": "Pipa Stood Galvanis 1 1/2\" x 1,8 mm x 5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1518550G",
+    "name": "Pipa Stood Galvanis 1 1/2\" x 1,8 mm x 5,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1518600G",
+    "name": "Pipa Stood Galvanis 1 1/2\" x 1,8 mm x 6 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "H5050200",
+    "name": "Hollo 50 x 50 x 3 mm x 2 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "H5050300",
+    "name": "Hollo 50 x 50 x 3 mm x 3 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "H5050600",
+    "name": "Hollo 50 x 50 x 3 mm x 6 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "152450G",
+    "name": "Pipa Galvanis 1 1/2\" x 2,4 mm x 0,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1524100G",
+    "name": "Pipa Galvanis 1 1/2\" x 2,4 mm x 1 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1524150G",
+    "name": "Pipa Galvanis 1 1/2\" x 2,4 mm x 1,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1524200G",
+    "name": "Pipa Galvanis 1 1/2\" x 2,4 mm x 2 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1524250G",
+    "name": "Pipa Galvanis 1 1/2\" x 2,4 mm x 2,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1524300G",
+    "name": "Pipa Galvanis 1 1/2\" x 2,4 mm x 3 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1524350G",
+    "name": "Pipa Galvanis 1 1/2\" x 2,4 mm x 3,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1524400G",
+    "name": "Pipa Galvanis 1 1/2\" x 2,4 mm x 4 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1524450G",
+    "name": "Pipa Galvanis 1 1/2\" x 2,4 mm x 4,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1524500G",
+    "name": "Pipa Galvanis 1 1/2\" x 2,4 mm x 5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1524550G",
+    "name": "Pipa Galvanis 1 1/2\" x 2,4 mm x 5,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1524600G",
+    "name": "Pipa Galvanis 1 1/2\" x 2,4 mm x 6 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1525150G",
+    "name": "Pipa Galvanis 1 1/2\" x 2,5 mm x 1,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1525300G",
+    "name": "Pipa Galvanis 1 1/2\" x 2,5 mm x 3 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "JISCF",
+    "name": "JIS Clamp FIXED",
+    "unit": "pcs"
+   },
+   {
+    "sku": "JISCS",
+    "name": "JIS Clamp SWIVEL",
+    "unit": "pcs"
+   },
+   {
+    "sku": "JISCFB",
+    "name": "JIS FIXED BEAM Clamp",
+    "unit": "pcs"
+   },
+   {
+    "sku": "JISCSB",
+    "name": "JIS SWIVEL BEAM Clamp",
+    "unit": "pcs"
+   },
+   {
+    "sku": "JISIJP",
+    "name": "JIS Inner Joint Pin 2,5 mm",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1503100G",
+    "name": "Pipa Galvanis 1 1/2 \" x 3 mm x 1 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1503150G",
+    "name": "Pipa Galvanis 1 1/2 \" x 3 mm x 1,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1503200G",
+    "name": "Pipa Galvanis 1 1/2 \" x 3 mm x 2 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1503250G",
+    "name": "Pipa Galvanis 1 1/2 \" x 3 mm x 2,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1503300G",
+    "name": "Pipa Galvanis 1 1/2 \" x 3 mm x 3 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1503350G",
+    "name": "Pipa Galvanis 1 1/2 \" x 3 mm x 3,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1503400G",
+    "name": "Pipa Galvanis 1 1/2 \" x 3 mm x 4 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1503450G",
+    "name": "Pipa Galvanis 1 1/2 \" x 3 mm x 4,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1503500G",
+    "name": "Pipa Galvanis 1 1/2 \" x 3 mm x 5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1503550G",
+    "name": "Pipa Galvanis 1 1/2 \" x 3 mm x 5,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1503600G",
+    "name": "Pipa Galvanis 1 1/2 \" x 3 mm x 6 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "153250G",
+    "name": "Pipa Galvanis 1 1/2 \" x 3,2 mm x 0,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1532100G",
+    "name": "Pipa Galvanis 1 1/2 \" x 3,2 mm x 1 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1532120G",
+    "name": "Pipa Galvanis 1 1/2 \" x 3,2 mm x 1,2 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1532150G",
+    "name": "Pipa Galvanis 1 1/2 \" x 3,2 mm x 1,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1532200G",
+    "name": "Pipa Galvanis 1 1/2 \" x 3,2 mm x 2 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1532250G",
+    "name": "Pipa Galvanis 1 1/2 \" x 3,2 mm x 2,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1532300G",
+    "name": "Pipa Galvanis 1 1/2 \" x 3,2 mm x 3 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1532350G",
+    "name": "Pipa Galvanis 1 1/2 \" x 3,2 mm x 3,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1532400G",
+    "name": "Pipa Galvanis 1 1/2 \" x 3,2 mm x 4 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1532450G",
+    "name": "Pipa Galvanis 1 1/2 \" x 3,2 mm x 4,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1532500G",
+    "name": "Pipa Galvanis 1 1/2 \" x 3,2 mm x 5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1532550G",
+    "name": "Pipa Galvanis 1 1/2 \" x 3,2 mm x 5,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1532600G",
+    "name": "Pipa Galvanis 1 1/2 \" x 3,2 mm x 6 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1504100G",
+    "name": "Pipa Galvanis 1 1/2 \" x 4 mm x 1 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1504150G",
+    "name": "Pipa Galvanis 1 1/2 \" x 4 mm x 1,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1504200G",
+    "name": "Pipa Galvanis 1 1/2 \" x 4 mm x 2 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1504250G",
+    "name": "Pipa Galvanis 1 1/2 \" x 4 mm x 2,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1504300G",
+    "name": "Pipa Galvanis 1 1/2 \" x 4 mm x 3 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1504350G",
+    "name": "Pipa Galvanis 1 1/2 \" x 4 mm x 3,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1504400G",
+    "name": "Pipa Galvanis 1 1/2 \" x 4 mm x 4 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1504450G",
+    "name": "Pipa Galvanis 1 1/2 \" x 4 mm x 4,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1504500G",
+    "name": "Pipa Galvanis 1 1/2 \" x 4 mm x 5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1504550G",
+    "name": "Pipa Galvanis 1 1/2 \" x 4 mm x 5,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1504600G",
+    "name": "Pipa Galvanis 1 1/2 \" x 4 mm x 6 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSPSFC",
+    "name": "BS Pressed Steel FIXED Clamp",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSPSSC",
+    "name": "BS Pressed Steel SWIVEL Clamp",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSDFFC",
+    "name": "BS Drop Forged FIXED Clamp",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSDFSC",
+    "name": "BS Drop Forged SWIVEL Clamp",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSDFFBC",
+    "name": "BS Drop Forged FIXED Beam Clamp",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSDFSBC",
+    "name": "BS Drop Forged SWIVEL Beam Clamp",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSSC",
+    "name": "BS Sleeve Coupler",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSBRC",
+    "name": "BS Board Retaining Coupler",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSPC",
+    "name": "BS Putlog Coupler",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSLC",
+    "name": "BS Ladder Clamp",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSJB60D38H",
+    "name": "Jackbase 60 cm D38 BOLONG",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSJB60D38F",
+    "name": "Jackbase 60 cm D38 PENUH",
+    "unit": "pcs"
+   },
+   {
+    "sku": "UH60D38F",
+    "name": "U Head 60 cm D 38 PENUH",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSMP01",
+    "name": "Plank 1 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSMP02",
+    "name": "Plank 2 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSMP03",
+    "name": "Plank 3 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSMP04",
+    "name": "Plank 4 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSTA03",
+    "name": "BS Tangga Alumunium 3 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSTA04",
+    "name": "BS Tangga Alumunium 4 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSTA05",
+    "name": "BS Tangga Alumunium 5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSTA06",
+    "name": "BS Tangga Alumunium 6 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSB150",
+    "name": "Baseplate besar 150 x 150 x 15",
+    "unit": "pcs"
+   },
+   {
+    "sku": "R8PR",
+    "name": "Roda Poly 8\" Lock",
+    "unit": "pcs"
+   },
+   {
+    "sku": "R8KR",
+    "name": "Roda Karet 8\" Rem",
+    "unit": "pcs"
+   },
+   {
+    "sku": "R8KM",
+    "name": "Roda Karet 8\" Mati",
+    "unit": "pcs"
+   },
+   {
+    "sku": "PCH-V2000",
+    "name": "PCH Vertical 2 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "RL-V2000",
+    "name": "Ringlock Vertical 2 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "RL-H1000",
+    "name": "Ringlock Horizontal 1 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "RL-H1500",
+    "name": "Ringlock Horizontal 1,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSIN150",
+    "name": "Inner 1,5 meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSIN200",
+    "name": "Inner 2 meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSSB01",
+    "name": "Sole Board 1 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSSB02",
+    "name": "Sole Board 2 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSSB03",
+    "name": "Sole Board 3 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSSB04",
+    "name": "Sole Board 4 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSSBK",
+    "name": "Sole Board kotak",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSKG",
+    "name": "Kawat BWG",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSKRPT",
+    "name": "Karpet abu - abu",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSTRPLKTPS",
+    "name": "Triplek tipis",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSTRPLKTBL",
+    "name": "Triplek tebal",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSCP",
+    "name": "Cover Pipa",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSTRPLPTH02",
+    "name": "Terpal Putih 2 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSTRPLPTH05",
+    "name": "Terpal Putih 5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSTRPLPTH06",
+    "name": "Terpal Putih 6 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSNET600",
+    "name": "net / jaring 6 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSNET1200",
+    "name": "net / jaring 12 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "BSST",
+    "name": "Scaffolding tag",
+    "unit": "pcs"
+   },
+   {
+    "sku": "SKSS100",
+    "name": "Sabuk Kolom / suri suri 1 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "SKSS120",
+    "name": "Sabuk Kolom / suri suri 1,2 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "SKSS150",
+    "name": "Sabuk Kolom / suri suri 1,5 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "SKSS200",
+    "name": "Sabuk Kolom / suri suri 2 Meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "PSPL200",
+    "name": "Push Pull 2 meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "PSPLK01",
+    "name": "Kicker 1 meter",
+    "unit": "pcs"
+   },
+   {
+    "sku": "PSPLMB",
+    "name": "Monas base",
+    "unit": "pcs"
+   },
+   {
+    "sku": "PSPLWG",
+    "name": "Baji",
+    "unit": "pcs"
+   },
+   {
+    "sku": "PSPLBP",
+    "name": "Baseplate Push Pull",
+    "unit": "pcs"
+   },
+   {
+    "sku": "SIKU4030",
+    "name": "Siku 40 x 30",
+    "unit": "pcs"
+   },
+   {
+    "sku": "1504300H",
+    "name": "Pipa stood hitam 1 1/2\" x 4 mm x 3 meter",
+    "unit": "pcs"
+   }
+  ]
+ },
+ "opening": {
+  "klopmart": {
+   "KLP-02": 212,
+   "KLP-03": 1392,
+   "KLP-05": 485,
+   "KLP-10": 410,
+   "KLP-11": 445,
+   "KLP-13": 227,
+   "KLP-14": 305,
+   "KLP-15": 180,
+   "KLP-16": 150
+  }
+ }
+}
+</script>
+
+<script>
+const D = JSON.parse(document.getElementById('data').textContent);
+const PER_PAGE = 10; // hasil pencarian per halaman
+const MAX_PILIHAN = 50; // maksimal barang dalam satu transaksi
+const app = document.getElementById('app'), ov = document.getElementById('ov');
+const S = { u:null, mode:'Masuk', sel:[], active:null, page:1, sync:null };
+const TITLE = { Masuk:'Barang Masuk', Keluar:'Barang Keluar' };
+const $ = (id)=>document.getElementById(id);
+const esc = (t)=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const norm = (t)=>t.toLowerCase().replace(/[^a-z0-9]/g,'');
+// Hari kerja Senin sampai Sabtu. Tambahkan ?uji=minggu di alamat file untuk mencoba tampilan hari Minggu.
+const isSunday = ()=> new Date().getDay()===0 || new URLSearchParams(location.search).get('uji')==='minggu';
+const stamp = ()=>({ createdAt:new Date().toISOString(), date:new Date().toLocaleDateString('sv-SE'), time:new Date().toLocaleTimeString('sv-SE') });
+
+/* ===== TITIK SAMBUNG BACKEND (Laravel) =====
+   Setiap transaksi membawa "pt" (indosteger | klopmart | narusafe). Pemetaan ke sheet (USULAN, perlu dikonfirmasi):
+   IN          (operator) : QC in += qty                       -> barang masuk menunggu dicek QC (pending = in - out)
+   QC          (QC)       : QC out += layak + reject         -> Masuk = QC out; reject juga ke Keluar (lewat notifikasi). Boleh dicicil: pending = in - out terbawa ke hari berikutnya
+   OUT         (operator) : Keluar += qty                      -> reason "REJECT" (dari notifikasi QC, bawa noticeId) atau "LAINNYA" (sewa/jual)
+   Sheet = minggu, blok = hari (Senin = 1 ... Sabtu = 6), diambil dari tanggal.
+   Catatan disimpan per barang (items[].notes); wajib untuk barang yang ada reject. */
+/* ===== Sambungan ke Google Sheets lewat Apps Script (Web App). URL kosong = transaksi tidak dikirim. =====
+   Klopmart belum disambung: tata letak sheet-nya beda (per tanggal, tanpa kolom QC).
+   Alur: simpan di aplikasi dulu (agar kerja tidak terhenti), lalu kirim ke sheet. Kalau gagal karena jaringan,
+   transaksi masuk antrean (outbox) dan dikirim ulang otomatis. Aman diulang: script mengabaikan transaksi kembar. */
+const GAS = { narusafe: 'https://script.google.com/macros/s/AKfycbzK-TIE_YAB9dNqa61rDJxDkomXBjtQeDyMFsQLV36Ec6mxqiDx9QiBMujETzRKFObL/exec', indosteger: 'https://script.google.com/macros/s/AKfycby1sX6WgCLKZEmAw9pJcTTDhKS18xmM5vKU6g29J-Uf1LDsRP_bZxckJuCz0HjOGlzycw/exec', klopmart: '' };
+const GAS_KODE = 'stok-fb689fb1945d';
+const OBX_KEY = 'stok_outbox_v1';
+const obxLoad = ()=>{ try{ return JSON.parse(localStorage.getItem(OBX_KEY)||'[]'); }catch(e){ return []; } };
+const obxSave = (a)=>{ try{ localStorage.setItem(OBX_KEY, JSON.stringify(a)); }catch(e){} };
+const gasUrl = (pt)=>{ const u = GAS[pt]; return u ? (/\/exec$/.test(u) ? u : u.replace(/\/+$/,'')+'/exec') : ''; };
+async function gasKirim(tx){ // {ok:true} | {ok:false,error,tetap:true} = ditolak sheet, diulang tidak menolong | {ok:false,error} = jaringan, boleh diulang
+  const ctl = new AbortController(), tm = setTimeout(()=>ctl.abort(), 30000);
+  try{
+    const r = await fetch(gasUrl(tx.pt), { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify({ kode:GAS_KODE, tx }), signal:ctl.signal });
+    const j = await r.json();
+    if(j.ok) return { ok:true };
+    const msg = String(j.error||'Ditolak sheet');
+    return { ok:false, error:msg, tetap: !/lock|timeout|timed out|server/i.test(msg) };
+  }catch(e){ return { ok:false, error: e.name==='AbortError' ? 'Waktu habis' : 'Tidak tersambung ke sheet' }; }
+  finally{ clearTimeout(tm); }
+}
+const obxFly = new Set();   // entri yang sedang dikirim (di halaman ini)
+async function obxKirim1(e){ // kirim satu entri antrean di latar belakang
+  if(obxFly.has(e.id)) return; obxFly.add(e.id); obxDraw();
+  try{
+    const r = await gasKirim(e.tx), a = obxLoad();
+    if(r.ok){ obxSave(a.filter(x=>x.id!==e.id)); muatBarang(); }   // sheet berubah: ambil daftar dan stok terbaru
+    else{
+      obxSave(a.map(x=>x.id===e.id ? { ...x, error:r.error, tetap:!!r.tetap } : x));
+      toast(r.tetap ? 'Ditolak sheet: '+r.error : 'Belum terkirim ke sheet, dicoba lagi otomatis');
+    }
+  } finally { obxFly.delete(e.id); obxDraw(); }
+}
+/* Tidak menunggu sheet: transaksi dicatat ke antrean (tahan tutup tab) lalu dikirim di latar belakang, layar langsung lanjut. */
+async function saveTransaction(tx){
+  if(!gasUrl(tx.pt)) return true;
+  const tgl = new URLSearchParams(location.search).get('tgl');   // uji: ?tgl=2026-09-09
+  const e = { id:Date.now()+'-'+Math.random().toString(36).slice(2,7), tx:{ ...tx, date: tgl || tx.date }, error:'', tetap:false };
+  obxSave(obxLoad().concat(e));
+  obxKirim1(e);
+  return true;
+}
+async function obxKirimUlang(semua){
+  const a = obxLoad().filter(e=>!obxFly.has(e.id) && (semua || !e.tetap));
+  if(semua) obxSave(obxLoad().map(x=>a.some(y=>y.id===x.id) ? { ...x, tetap:false } : x));
+  for(const e of a) await obxKirim1(e);
+}
+function obxDraw(){
+  let b = document.getElementById('obx'); const a = obxLoad();
+  if(!a.length){ if(b) b.hidden = true; return; }
+  if(!b){ b = document.createElement('button'); b.id = 'obx'; b.type = 'button'; b.onclick = obxDialog; document.body.appendChild(b); }
+  const tolak = a.filter(x=>x.tetap).length, kirim = a.filter(x=>!x.tetap && obxFly.has(x.id)).length, tunggu = a.length - tolak - kirim;
+  const t = []; if(tolak) t.push('⚠ '+tolak+' ditolak sheet'); if(tunggu) t.push(tunggu+' menunggu terkirim'); if(kirim) t.push('Mengirim ke sheet…');
+  b.className = 'obx' + (tolak ? ' bad' : (!tunggu ? ' fly' : '')); b.textContent = t.join(' · ');
+  const hd = document.querySelector('.hdr'); b.style.top = (hd ? Math.round(hd.getBoundingClientRect().bottom)+8 : 16)+'px';
+  b.hidden = false;
+}
+function obxDialog(){
+  const a = obxLoad(), jn = { IN:'Barang masuk', OUT:'Barang keluar', QC:'Hasil QC', NEWITEM:'Barang baru' };
+  dialog(`<b style="font-size:22px">Belum masuk ke sheet</b>
+    <div class="cl">${a.map(e=>`<div class="ci"><div class="ct"><div><b>${jn[e.tx.type]||e.tx.type} · ${esc(e.tx.date||'')}</b><small>${(e.tx.items||[]).length} barang · ${esc(e.error||'')}${e.tetap?' (ditolak sheet)':''}</small></div></div></div>`).join('')}</div>
+    <div class="btns"><button class="tb" id="obt">Tutup</button><button class="tb" id="obd">Buang yang ditolak</button><button class="tb btn-g" id="obk" style="min-height:56px;font-size:18px">Kirim ulang</button></div>`);
+  $('obt').onclick = ()=>ov.hidden = true;
+  $('obd').onclick = ()=>{ obxSave(obxLoad().filter(x=>!x.tetap)); obxDraw(); ov.hidden = true; };
+  $('obk').onclick = async ()=>{ $('obk').disabled = true; await obxKirimUlang(true); ov.hidden = true; toast(obxLoad().length ? 'Masih ada yang belum terkirim' : 'Semua sudah terkirim ke sheet'); };
+}
+setInterval(()=>{ obxDraw(); if(navigator.onLine!==false && obxLoad().some(x=>!x.tetap && !obxFly.has(x.id))) obxKirimUlang(false); }, 15000);
+addEventListener('online', ()=>obxKirimUlang(false));
+setTimeout(obxDraw, 600);
+/* DAFTAR BARANG DUA ARAH: sheet = sumber utama, aplikasi = jembatan.
+   Barang yang ditambah di sheet muncul di aplikasi (dibaca lewat ?aksi=barang), barang yang ditambah di aplikasi dikirim ke sheet (type NEWITEM).
+   Kalau sheet tidak terjangkau, dipakai daftar terakhir yang berhasil dibaca (atau daftar bawaan). */
+const BS_KEY = 'stok_barang_sheet_v1';
+let BSHEET = (()=>{ try{ return JSON.parse(localStorage.getItem(BS_KEY)||'{}'); }catch(e){ return {}; } })();
+const hashNama = (t)=>{ let h = 5381; const x = norm(t); for(let i=0;i<x.length;i++) h = ((h<<5)+h+x.charCodeAt(i))>>>0; return h.toString(36).toUpperCase(); };
+const kunciBarang = (sku,name)=> sku || 'BARU-'+hashNama(name);          // barang tanpa SKU: kunci sementara dari nama
+const adaSku = (k)=>!/^BARU-/.test(k||'');
+const skuTxt = (k)=> adaSku(k) ? esc(k) : 'SKU belum diisi';
+/* Sinkron dengan sheet. Barang dikenali dari NOMOR barisnya (kolom No), bukan dari nama/SKU, jadi mengubah nama atau SKU di sheet
+   tidak membuat barang ganda. Data yang tersimpan di aplikasi (antrean QC, stok, reject) ikut dipindah ke SKU/nama yang baru. */
+function sinkronData(pt, lama, baru){
+  const peta = {}, namaBaru = {}, kunciBaru = new Set(), namaSet = new Set();
+  baru.forEach(i=>{ namaBaru[i.sku] = i.name; kunciBaru.add(i.sku); namaSet.add(norm(i.name)); });
+  lama.forEach(i=>{
+    let r = null;
+    if(i.no!=null) r = baru.find(x=>x.no===i.no);
+    else if(!adaSku(i.sku)) r = baru.find(x=>norm(x.name)===norm(i.name));   // barang baru dari aplikasi yang belum punya nomor
+    if(r && r.sku!==i.sku) peta[i.sku] = r.sku;
+  });
+  const ks = Object.keys(peta);
+  const hapus = ST.newItems.filter(i=>i.pt===pt && (kunciBaru.has(i.sku) || namaSet.has(norm(i.name)) || peta[i.sku]));   // sudah ada di sheet: sheet yang jadi acuan
+  const namaBeda = (x)=>{ const k = peta[x.sku] || x.sku; return namaBaru[k]!==undefined && namaBaru[k]!==x.name; };
+  const perluNama = ST.batches.some(b=>b.pt===pt && b.items.some(namaBeda)) || ST.notices.some(n=>n.pt===pt && namaBeda(n));
+  if(!ks.length && !hapus.length && !perluNama) return;
+  commit(st=>{
+    const pindah = (x)=>{ if(peta[x.sku]) x.sku = peta[x.sku]; if(namaBaru[x.sku]!==undefined) x.name = namaBaru[x.sku]; };
+    st.batches.forEach(b=>{ if(b.pt===pt) b.items.forEach(pindah); });
+    st.notices.forEach(n=>{ if(n.pt===pt) pindah(n); });
+    const q = st.qc[pt] || {}, o = st.outs[pt] || {};
+    ks.forEach(k=>{ const t = peta[k];
+      if(q[k]){ const c = q[t] || (q[t]={ layak:0, reject:0 }); c.layak += q[k].layak||0; c.reject += q[k].reject||0; delete q[k]; }
+      if(o[k]!==undefined){ o[t] = (o[t]||0)+o[k]; delete o[k]; } });
+    const gone = new Set(hapus.map(i=>i.sku+'|'+i.name));
+    st.newItems = st.newItems.filter(i=>!(i.pt===pt && gone.has(i.sku+'|'+i.name)));
+  });
+}
+const BIDX = {};   // indeks SKU -> barang dari sheet (termasuk stok tersedia)
+const buatIdx = (pt)=>{ const m = {}; (BSHEET[pt]||[]).forEach(i=>{ m[i.sku] = i; }); BIDX[pt] = m; };
+Object.keys(BSHEET).forEach(buatIdx);
+let OBX_RAW = null, OBX_MAP = {};
+const obxMap = ()=>{ let raw = null; try{ raw = localStorage.getItem(OBX_KEY); }catch(e){}   // perubahan stok dari kiriman yang belum sampai ke sheet
+  if(raw!==OBX_RAW){ OBX_RAW = raw; OBX_MAP = {}; obxLoad().forEach(e=>{ const t = e.tx; if(!t || e.tetap) return;
+    (t.items||[]).forEach(i=>{ const k = t.pt+'|'+i.sku; let d = 0;
+      if(t.type==='OUT' && t.reason!=='REJECT') d = -(Number(i.qty)||0); else if(t.type==='QC') d = Number(i.layak)||0;
+      if(d) OBX_MAP[k] = (OBX_MAP[k]||0)+d; }); }); }
+  return OBX_MAP; };
+async function muatBarang(ms){
+  if(typeof S==='undefined' || !S.u) return false;
+  const pt = S.u.pt, base = gasUrl(pt); if(!base) return false;
+  const ctl = new AbortController(), tm = setTimeout(()=>ctl.abort(), ms||15000);
+  try{
+    const r = await fetch(base+'?aksi=barang&kode='+encodeURIComponent(GAS_KODE)+'&tgl='+encodeURIComponent(new URLSearchParams(location.search).get('tgl') || new Date().toLocaleDateString('sv-SE'))+'&_='+Date.now(), { signal:ctl.signal });
+    const j = await r.json();
+    if(!(j.ok && Array.isArray(j.items) && j.items.length)) return false;
+    const list = j.items.map(i=>{ const nm = String(i.name||'').trim(); return { no:(typeof i.no==='number'?i.no:null), sku:kunciBarang(String(i.sku||'').trim(), nm), name:nm, unit:'pcs', stok:(typeof i.stok==='number'?i.stok:null) }; }), lama = (BSHEET[pt]||[]).concat(ST.newItems.filter(i=>i.pt===pt)), berubah = JSON.stringify(list)!==JSON.stringify(BSHEET[pt]||[]);
+    BSHEET[pt] = list; try{ localStorage.setItem(BS_KEY, JSON.stringify(BSHEET)); }catch(e){}
+    buatIdx(pt);
+    try{ sinkronData(pt, lama, list); }catch(e){}
+    if(berubah && S.onItems){ try{ S.onItems(); }catch(e){} }
+    return true;
+  }catch(e){ return false; } finally{ clearTimeout(tm); }
+}
+setInterval(()=>{ if(typeof S!=='undefined' && S.u && !document.hidden) muatBarang(); }, 60000);
+async function saveNewItem(item){ // ke sheet lewat antrean kirim (dicoba ulang otomatis kalau gagal)
+  return saveTransaction({ type:'NEWITEM', pt:item.pt, operator:item.createdBy, createdAt:item.createdAt, date:item.date, time:item.time, items:[{ sku:item.sku, name:item.name }] });
+}
+
+/* ===== DATA BERSAMA (REAL-TIME) =====
+   Prototype ini memakai localStorage + pengecekan tiap 1 detik, jadi semua tab/tablet di browser yang sama saling melihat perubahan.
+   Di Laravel: ganti commit()/load() dengan API + WebSocket (Laravel Reverb / Echo) atau polling. Bentuk datanya bisa dipakai apa adanya:
+   batches[]  : barang masuk dari operator, status WAIT_QC -> QC_DONE
+   notices[]  : info reject dari QC untuk operator, status WAIT -> DONE
+   outs{}     : pt -> sku -> total keluar manual (sewa/jual), dipakai untuk menghitung stok
+   qc{}       : pt -> sku -> {layak, reject} total hasil QC (dicicil). Item batch punya proc = jumlah yang sudah diproses QC
+   Stok per PT per barang = total barang BAIK hasil QC - total keluar manual (sewa/jual). Reject tidak pernah masuk stok, jadi saat operator menyimpannya sebagai Keluar stok tidak dikurangi lagi. Stok awal belum ada di Excel, jadi mulai dari 0. */
+const KEY = 'stok_state_v3';
+const fresh = ()=>({ rev:0, seq:1, batches:[], notices:[], outs:{}, qc:{}, newItems:[] });
+let MEM = null, RAW = null;
+function load(){
+  let raw = null; try{ raw = localStorage.getItem(KEY); }catch(e){}
+  if(raw===null) return MEM ? JSON.parse(MEM) : fresh();
+  RAW = raw; try{ return Object.assign(fresh(), JSON.parse(raw)); }catch(e){ return fresh(); }
+}
+function save(st){ st.rev++; const raw = JSON.stringify(st); MEM = raw; try{ localStorage.setItem(KEY, raw); RAW = raw; }catch(e){} }
+let ST = load();
+/* Reset data demo: hapus semua barang masuk, antrean QC, notifikasi, stok, dan barang baru. Alur dan akun tidak berubah. */
+function resetData(){ try{ localStorage.removeItem(KEY); }catch(e){} MEM = null; RAW = null; ST = fresh(); }
+function commit(fn){ ST = load(); const r = fn(ST); save(ST); return r; }
+
+const PT = ()=>D.pts[S.u.pt];
+const ROLE = ()=>S.u.role==='qc' ? 'QC' : 'Operator';
+const items = ()=>{ const pt = S.u.pt, sh = BSHEET[pt], base = (sh && sh.length) ? sh : (D.items[pt]||[]), have = new Set(base.map(i=>i.sku));
+  const nama = new Set(base.map(i=>norm(i.name)));
+  return base.concat(ST.newItems.filter(i=>i.pt===pt && !have.has(i.sku) && !nama.has(norm(i.name)))); }; // sheet sebagai acuan; barang baru yang belum sampai ke sheet tetap tampil
+const qcOf = (st,pt,sku)=>((st.qc[pt]||{})[sku]) || { layak:0, reject:0 };
+const stockLokal = (sku)=> (((D.opening||{})[S.u.pt]||{})[sku]||0) + qcOf(ST,S.u.pt,sku).layak - ((ST.outs[S.u.pt]||{})[sku]||0);
+const stockOf = (sku)=>{ const pt = S.u.pt, it = (BIDX[pt]||{})[sku];   // sheet = acuan stok tersedia; kalau sheet belum terbaca, pakai hitungan lokal
+  if(gasUrl(pt) && it && typeof it.stok==='number') return it.stok + (obxMap()[pt+'|'+sku]||0);
+  return stockLokal(sku); };
+const addOut = (st,pt,its)=>{ const o = st.outs[pt]||{}; its.forEach(s=>{ o[s.sku] = (o[s.sku]||0)+s.qty; }); st.outs[pt] = o; };
+/* pending QC = barang masuk dikurangi yang sudah diproses QC (layak + reject), SKU sama digabung: [{sku,name,qty (sisa pending),n (jumlah pengiriman),notes}] */
+const aggOf = (st,pt)=>{ const m = {};
+  st.batches.filter(b=>b.pt===pt).forEach(b=>b.items.forEach(i=>{ const left = i.qty-(i.proc||0); if(left<=0) return; const a = m[i.sku] || (m[i.sku]={ sku:i.sku, name:i.name, qty:0, n:0, notes:[] }); a.qty += left; a.n++; if(i.notes) a.notes.push(i.notes); }));
+  return Object.values(m); };
+const waitAgg = ()=>aggOf(ST,S.u.pt);
+const waitNotices = ()=>ST.notices.filter(n=>n.pt===S.u.pt && n.status==='WAIT').sort((a,b)=>a.createdAt<b.createdAt?-1:1);
+
+/* SUARA NOTIFIKASI: nada singkat lewat WebAudio (tanpa file). Browser baru mengizinkan suara setelah layar disentuh sekali (login sudah termasuk). */
+let AC = null;
+const bukaSuara = ()=>{ try{ if(!AC) AC = new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume(); }catch(e){} };
+['pointerdown','keydown','touchstart'].forEach(ev=>document.addEventListener(ev, bukaSuara, { passive:true }));
+function bunyi(jenis){ // 'masuk' = barang masuk untuk QC (3 nada naik) | 'reject' = reject dari QC untuk operator (2 nada rendah, diulang)
+  try{
+    bukaSuara(); if(AC && AC.state==='running'){
+      const pola = jenis==='reject' ? [[587,0],[440,.2],[587,.55],[440,.75]] : [[784,0],[988,.16],[1319,.32]], t0 = AC.currentTime+.02;
+      pola.forEach(([f,d])=>{ const o = AC.createOscillator(), g = AC.createGain(); o.type='sine'; o.frequency.value = f; o.connect(g); g.connect(AC.destination);
+        g.gain.setValueAtTime(0.0001,t0+d); g.gain.exponentialRampToValueAtTime(.35,t0+d+.02); g.gain.exponentialRampToValueAtTime(.0001,t0+d+.18); o.start(t0+d); o.stop(t0+d+.2); });
+    }
+  }catch(e){}
+  try{ if(navigator.vibrate) navigator.vibrate(jenis==='reject' ? [200,100,200] : [120,60,120]); }catch(e){}
+}
+function toast(msg){ const t=$('toast'), hd=document.querySelector('.hdr'); t.style.top = (hd ? Math.round(hd.getBoundingClientRect().bottom)+8 : 16)+'px'; t.textContent=msg; t.hidden=false; clearTimeout(S.tt); S.tt=setTimeout(()=>t.hidden=true, 6000); }
+$('toast').onclick = ()=>$('toast').hidden = true;
+function poll(){
+  if(!S.u) return;
+  let raw = null; try{ raw = localStorage.getItem(KEY); }catch(e){}
+  if(raw===RAW) return;
+  if(raw===null){ MEM = null; RAW = null; } // data di-reset dari tab lain
+  const qc = S.u.role==='qc', count = ()=>qc ? waitAgg().reduce((a,x)=>a+x.qty,0) : waitNotices().length;
+  const before = count(); ST = load();
+  if(count()>before){ bunyi(qc ? 'masuk' : 'reject'); toast(qc ? 'Ada barang masuk baru untuk dicek' : 'Ada barang reject baru dari QC. Cek di Barang Keluar'); }
+  if(S.sync) S.sync();
+}
+setInterval(poll, 1000);
+addEventListener('storage', (e)=>{ if(e.key===KEY) poll(); });
+
+function showLogin(){
+  clearInterval(S.clock); ov.hidden = true; S.u = null; S.sync = null;
+  app.innerHTML = `<div class="login"><div class="card">
+    <div class="lt"><b>Stok Gudang</b><span>Masuk untuk melanjutkan</span></div>
+    <div><label for="u">Username</label><input class="i" id="u" autocomplete="off"></div>
+    <div><label for="pw">Password</label><input class="i" id="pw" type="password"></div>
+    <div class="err" id="lerr"></div>
+    <button class="btn-g" id="go">Login</button>
+    <details class="demo"><summary>Akun demo (password: gudang123)</summary>
+      <div class="chips">${D.users.map(u=>`<button class="chip" data-u="${u.username}">${u.role==='qc'?'QC':'Operator'} ${D.pts[u.pt].short}</button>`).join('')}</div>
+      <button class="chip rst" id="rst">Reset data demo</button></details></div></div>`;
+  const submit = ()=>{
+    const u=$('u').value.trim().toLowerCase(), p=$('pw').value;
+    if(!u||!p) return $('lerr').textContent='Isi username dan password';
+    const f = D.users.find(x=>x.username===u && x.password===p);
+    if(!f) return $('lerr').textContent='Username atau password salah';
+    S.u = f; showMenu(); muatBarang();
+  };
+  $('go').onclick = submit;
+  $('pw').onkeydown = (e)=>{ if(e.key==='Enter') submit(); };
+  document.querySelector('.chips').onclick = (e)=>{ const c=e.target.closest('[data-u]'); if(c){ $('u').value=c.dataset.u; $('pw').value='gudang123'; $('lerr').textContent=''; } };
+  $('rst').onclick = ()=>{
+    dialog(`<b style="font-size:22px">Reset data demo?</b><div style="font-size:17px">Semua barang masuk, antrean QC, notifikasi reject, stok, dan barang baru akan dihapus. Akun dan alur tidak berubah.</div>
+      <div class="btns"><button class="tb" id="no">Batal</button><button class="tb btn-g" id="yes" style="min-height:56px;font-size:18px">Ya, Reset</button></div>`);
+    $('no').onclick = ()=>ov.hidden = true;
+    $('yes').onclick = ()=>{ resetData(); dialog(`<div class="chk">✓</div><b style="font-size:22px">Data sudah di-reset</b><div class="btns"><button class="tb btn-g" id="ok" style="min-height:56px;font-size:18px">OK</button></div>`); $('ok').onclick = ()=>ov.hidden = true; };
+  };
+  $('u').focus();
+}
+
+function showMenu(){
+  clearInterval(S.clock); ov.hidden = true;
+  const qc = S.u.role==='qc', nb = waitAgg().length, nn = waitNotices().length;
+  const tiles = qc
+    ? `<button class="big pri" id="qc"><span class="bl"><span>QC</span></span>${nb?`<small>${nb} menunggu dicek</small>`:''}</button>`
+    : `<button class="big pri" id="in"><span class="bl"><span>Barang</span> <span>Masuk</span></span></button>
+       <button class="big" id="out"><span class="bl"><span>Barang</span> <span>Keluar</span></span>${nn?`<small>${nn} reject dari QC</small>`:''}</button>
+       <button class="big" id="add"><span class="bl"><span>Tambah</span> <span>Barang</span></span></button>`;
+  S.relayout = null; app.innerHTML = `<div class="hdr"><b>Halo, ${esc(S.u.name)}</b><span class="pt">${esc(PT().name)} · ${ROLE()}</span><button class="tb" id="lo">Logout</button></div>
+    <div class="pg"><div class="choices">${tiles}</div></div>`;
+  $('lo').onclick = showLogin;
+  if(qc){ $('qc').onclick = showQC; }
+  else { $('in').onclick = ()=>showForm('Masuk'); $('out').onclick = ()=>showForm('Keluar'); $('add').onclick = showAdd; }
+  S.sync = showMenu;
+}
+
+const I = {
+  back:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>',
+  out:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>',
+  ck:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="4"><path d="M4 12l5 5L20 6"/></svg>',
+  del:'<svg width="34" height="28" viewBox="0 0 24 20" fill="none" stroke="#000" stroke-width="2"><path d="M21 2H8L1 10l7 8h13a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/><path d="M17 7l-6 6M11 7l6 6"/></svg>'
+};
+const pgs = (c,t)=> t<=7 ? [...Array(t)].map((_,i)=>i+1) : c<=4 ? [1,2,3,4,'…',t] : c>=t-3 ? [1,'…',t-3,t-2,t-1,t] : [1,'…',c-1,c,c+1,'…',t];
+
+const fmtNow = ()=>{ const d=new Date(), hp = MODE()==='hp';
+  return new Intl.DateTimeFormat('id-ID',hp?{weekday:'short',day:'numeric',month:'short'}:{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(d)
+    +'<br><b style="font-size:'+(hp?13:18)+'px;margin:0;color:#14213d">'+d.toLocaleTimeString('sv-SE',{hour:'2-digit',minute:'2-digit'})+'</b>'; };
+const header = (title)=>`<div class="hdr fh"><button class="hb" id="back" aria-label="Kembali">${I.back}<span class="hbt">Kembali</span></button><b>${title}</b><span class="clk" id="clk"></span><span class="who">${esc(S.u.name)}<small class="whp">${esc(PT().short)} · ${ROLE()}</small></span><button class="hb" id="lo" aria-label="Logout">${I.out}<span class="hbt">Logout</span></button></div>`;
+function startClock(){
+  clearInterval(S.clock);
+  const tick = ()=>{ const c=$('clk'); if(!c) return clearInterval(S.clock); c.innerHTML = fmtNow(); };
+  tick(); S.clock = setInterval(tick, 10000);
+}
+
+/* numpad dipakai bersama oleh form barang dan form QC */
+const padHtml = ()=>['7','8','9','4','5','6','1','2','3','0','00','del'].map(k=>k==='del'?`<button class="del" data-k="del">${I.del}Hapus</button>`:`<button data-k="${k}">${k}</button>`).join('');
+const padKey = (v,k)=> k==='del' ? v.slice(0,-1) : (!(v===''&&(k==='0'||k==='00')) && (v+k).length<=7 ? v+k : v);
+
+/* ===== MODE TAMPILAN =====
+   desktop : mouse + keyboard laptop. Tanpa numpad, Qty diketik langsung, catatan di kolom kanan.
+   tablet  : layar sentuh sedang (sisi terpendek > 500px). Numpad di layar (keyboard bawaan tidak muncul untuk Qty/Reject), catatan di bawah daftar.
+   hp      : layar sempit, atau layar sentuh yang sisi terpendeknya <= 500px (termasuk HP landscape). Tanpa numpad, Qty memunculkan keyboard angka bawaan HP.
+   Untuk mencoba tanpa ganti perangkat: tambahkan ?tampilan=desktop, ?tampilan=tablet, atau ?tampilan=hp di alamat file. */
+const MODE = ()=>{ const q = new URLSearchParams(location.search).get('tampilan'); if(q==='desktop'||q==='tablet'||q==='hp') return q;
+  const touch = matchMedia('(pointer:coarse)').matches;
+  if(innerWidth<=700 || (touch && Math.min(innerWidth,innerHeight)<=500)) return 'hp';
+  return touch ? 'tablet' : 'desktop'; };
+const setMode = ()=>{ const m = MODE(), ch = document.body.dataset.m!==m; document.body.dataset.m = m; return ch; };
+setMode();
+addEventListener('resize', ()=>{ if(setMode() && S.relayout && document.querySelector('.padc')) S.relayout(); });
+/* posisi keyboard: bar catatan HP naik mengikuti keyboard (visualViewport) */
+const kbOff = ()=>{ const v = window.visualViewport; if(!v) return; document.documentElement.style.setProperty('--kb', Math.max(0, Math.round(innerHeight - v.height - v.offsetTop))+'px'); };
+if(window.visualViewport){ visualViewport.addEventListener('resize', kbOff); visualViewport.addEventListener('scroll', kbOff); }
+/* HP: bar kecil di atas keyboard saat mengisi Qty/Reject, berisi nama barang + tombol Selesai. Ketuk area kosong mana pun juga menutup keyboard */
+const kbar = document.createElement('div'); kbar.id = 'kbar';
+const kbl = document.createElement('span'); kbl.id = 'kbl';
+const kbd = document.createElement('button'); kbd.type = 'button'; kbd.id = 'kbd'; kbd.textContent = 'Selesai';
+kbar.append(kbl, kbd); document.body.appendChild(kbar);
+kbd.onmousedown = (e)=>e.preventDefault();
+kbd.onclick = ()=>{ const a = document.activeElement; if(a && a.blur) a.blur(); };
+document.addEventListener('focusin', (e)=>{ const t = e.target;
+  if(MODE()==='hp' && t.classList && t.classList.contains('sqi')){ const it = t.closest('.it'), sp = it && it.querySelector('.sc span');
+    kbl.textContent = sp && sp.firstChild ? sp.firstChild.textContent : 'Qty'; document.body.classList.add('typing'); kbOff(); } });
+document.addEventListener('focusout', (e)=>{ if(e.target.classList && e.target.classList.contains('sqi')) document.body.classList.remove('typing'); });
+document.addEventListener('pointerdown', (e)=>{ if(MODE()==='desktop') return; const a = document.activeElement;
+  if(!a || !(a.classList.contains('sqi') || a.id==='notes')) return;
+  if(e.target.closest('input,textarea,button,.notebox,#kbar')) return; a.blur(); });
+/* HP: tombol Simpan baru muncul kalau semua Qty sudah terisi (QC: kalau sudah ada barang yang dicek) */
+const refreshSave = ()=>{ const sv = $('save'), sel = $('sel'); if(!sv || !sel) return; const f = sv.closest('.foot'); if(!f) return;
+  const rows = [...sel.querySelectorAll('.it')];
+  const ok = rows.length>0 && rows.every(it=>[...it.querySelectorAll('.sqi')].some(i=>Number(i.value)>0));
+  f.style.display = (MODE()==='hp' && !ok) ? 'none' : ''; };
+new MutationObserver(refreshSave).observe(app, { childList:true, subtree:true });
+document.addEventListener('input', refreshSave); addEventListener('resize', refreshSave);
+const autosize = (t)=>{ t.style.height = 'auto'; t.style.height = Math.min(t.scrollHeight+2, 240)+'px'; }; // kolom catatan ikut membesar saat mengetik
+const digits = (v)=>v.replace(/\D/g,'').replace(/^0+(?=\d)/,'').slice(0,7);
+const qtyAttrs = ()=> 'inputmode="numeric" pattern="[0-9]*" enterkeyhint="next"'; // semua mode: numpad bawaan perangkat
+const placeNote = ()=>{ const nb = $('nbox'), pc = document.querySelector('.padc'); if(!nb || !pc) return; // desktop dan HP: di kolom kanan / dekat Simpan; tablet: di bawah daftar
+  if(MODE()==='tablet') document.querySelector('.left').appendChild(nb); else pc.insertBefore(nb, pc.querySelector('.foot'));
+  if(!nb.dataset.bar){ nb.dataset.bar = '1'; // bar catatan ala WhatsApp (khusus HP)
+    const ta = $('notes'), bt = document.createElement('button'); bt.type = 'button'; bt.className = 'ndone'; bt.textContent = 'Selesai'; nb.appendChild(bt);
+    bt.onmousedown = (e)=>e.preventDefault(); // jaga fokus supaya tombol tidak hilang sebelum diketuk
+    bt.onclick = ()=>ta.blur();
+    ta.addEventListener('focus', ()=>{ if(MODE()!=='desktop'){ document.body.classList.add('noting'); kbOff(); autosize(ta);
+      const toEnd = ()=>scrollTo({ top:document.documentElement.scrollHeight, behavior:'smooth' }); setTimeout(toEnd,60); setTimeout(toEnd,350); } }); // tiap buka catatan, halaman otomatis scroll sampai mentok
+    ta.addEventListener('blur', ()=>document.body.classList.remove('noting')); } };
+const keepFocus = (fn)=>{ const a = document.activeElement, cl = a && a.classList, isN = !!(cl && cl.contains('nt')), isQ = !!(cl && cl.contains('sqi'));
+  const k = (isN||isQ) ? [a.dataset.sku, a.selectionStart, isN ? a.dataset.n : (a.dataset.f||''), isN] : null;
+  fn(); if(k){ const i = document.querySelector(k[3] ? '#sel .nt[data-sku="'+CSS.escape(k[0])+'"][data-n="'+k[2]+'"]' : '#sel .sqi[data-sku="'+CSS.escape(k[0])+'"]'+(k[2]?'[data-f="'+k[2]+'"]':'')); if(i){ i.focus(); try{ i.setSelectionRange(k[1],k[1]); }catch(e){} } } };
+const focusQty = (sku)=>{ const i = document.querySelector('#sel .sqi[data-sku="'+CSS.escape(sku)+'"]'); if(i){ i.focus(); i.select(); } };
+
+function showForm(mode){
+  clearInterval(S.clock); ov.hidden = true;
+  S.mode = mode; S.sel = []; S.active = null; S.page = 1; muatBarang();
+  const masuk = mode==='Masuk', keluar = mode==='Keluar';
+  app.innerHTML = `<div id="form" style="display:flex;flex-direction:column;min-height:100vh;min-height:100dvh">
+    ${header(TITLE[mode])}
+    <div class="sun" ${isSunday()?'':'hidden'}>Hari Minggu tidak ada pencatatan. Data tidak bisa disimpan.</div>
+    <div id="rej"></div>
+    <div class="fb"><div class="cols">
+      <div class="left"><label for="q">Cari Barang</label>
+        <div style="display:flex;gap:8px;margin-bottom:12px"><input class="i" id="q" placeholder="Masukkan kode atau nama barang..." autocomplete="off"><button class="hb" id="fin" style="display:none;background:var(--g);color:#fff;border-color:var(--g)">Selesai</button></div>
+        ${masuk?'<div class="hint" style="margin:-2px 0 10px">Isi jumlah sesuai surat jalan. Catatan opsional, ikut terlihat oleh QC. Pengecekan reject dilakukan oleh QC.</div>':''}<div class="lbox"><div class="list" id="list"></div><div class="pager" id="pager"></div></div></div>
+      <div class="mid"><div class="sh" style="grid-template-columns:1fr"><h3 id="cnt">Pilihan Barang</h3></div><div class="selw" id="sel"></div>
+      </div>
+      <div class="padc"><div class="actb" id="actb"></div><div class="pad" id="pad"></div>
+        <div class="notebox" id="nbox" hidden><label for="notes" id="nlab"></label><textarea class="i" id="notes" rows="1"></textarea></div>
+        <div class="foot"><div class="err" id="err"></div><button class="btn-g" id="save">Simpan</button></div></div>
+    </div></div></div>`;
+  const form = $('form');
+  $('lo').onclick = showLogin; $('back').onclick = showMenu;
+  placeNote();
+
+  const isAct = (s)=>S.active&&S.active.sku===s.sku;
+  const over = (s)=>keluar && Number(s.qty)>stockOf(s.sku);
+  const qin = (s)=>`<input class="sqi ${isAct(s)?'act':''}" data-sku="${esc(s.sku)}" value="${esc(s.qty)}" placeholder="0" autocomplete="off" aria-label="Qty ${esc(s.name)}" ${qtyAttrs()}>`;
+  /* catatan per barang di sebelah Qty (sama seperti di QC): ada angka -> tombol "Catatan" / isi catatan di samping; ketuk -> kolom terbuka di bawah */
+  const PEN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>';
+  let drawing = false;
+  const nChip = (s)=>Number(s.qty)>0 && !s.e_note, nOpen = (s)=>Number(s.qty)>0 && !!s.e_note;
+  const ncpS = (s)=>`<button type="button" class="ncp${(s.note||'').trim()?'':' kosong'}" data-n="note" title="Catatan" ${nChip(s)?'':'hidden'}><span>${esc((s.note||'').trim()||'Catatan')}</span>${PEN}</button>`;
+  const ntS = (s)=>`<input type="text" class="i nt" data-sku="${esc(s.sku)}" data-n="note" value="${esc(s.note||'')}" placeholder="Catatan..." autocomplete="off" ${nOpen(s)?'':'hidden'}>`;
+  const syncNote = (row,s)=>{ const i = row.querySelector('.nt'), c = row.querySelector('.ncp'); if(!i||!c) return;
+    i.hidden = !nOpen(s); c.hidden = !nChip(s); c.firstChild.textContent = (s.note||'').trim() || 'Catatan'; c.classList.toggle('kosong', !(s.note||'').trim()); };
+
+  /* panel notifikasi reject dari QC (hanya di Barang Keluar) */
+  let rl = $('rly'); if(!rl){ rl = document.createElement('div'); rl.id='rly'; rl.className='rly'; document.body.appendChild(rl); }
+  rl.hidden = true; document.body.style.overflow = '';
+  const RS = { open:false, sku:null };
+  const closeRl = ()=>{ RS.open=false; rl.hidden=true; document.body.style.overflow=''; };
+  const groupRej = ns=>{ const m=new Map(); ns.forEach(n=>{ if(!m.has(n.sku)) m.set(n.sku,{sku:n.sku,name:n.name,list:[],tot:0}); const g=m.get(n.sku); g.list.push(n); g.tot+=Number(n.qty); }); return [...m.values()]; };
+  const drawLayer = ()=>{
+    const ns = waitNotices();
+    if(!ns.length){ closeRl(); return; }
+    if(!RS.open){ rl.hidden=true; return; }
+    const gs = groupRej(ns), tot = ns.reduce((a,n)=>a+Number(n.qty),0);
+    if(RS.sku===null && gs.length===1) RS.sku = gs[0].sku;
+    rl.hidden = false;
+    rl.innerHTML = `<div class="pn" role="dialog" aria-modal="true" aria-label="Reject dari QC"><div class="hd"><div class="tt"><h2>Daftar Reject dari QC</h2><p>Barang berikut dinyatakan tidak layak oleh QC. Periksa jumlahnya, lalu simpan agar tercatat sebagai barang keluar.</p></div><button type="button" class="x" data-x aria-label="Tutup">✕</button></div>
+      <div class="tb"><span>${gs.length} barang · ${tot} pcs menunggu dicatat</span><button type="button" class="btn-g rejall" data-all>Simpan semua (${ns.length})</button></div>
+      <div class="bd">${gs.map(g=>`<div class="rg ${RS.sku===g.sku?'open':''}"><button type="button" class="rgh" data-g="${esc(g.sku)}" aria-expanded="${RS.sku===g.sku}"><span class="m"><b>${esc(g.name)}</b><small>${skuTxt(g.sku)} · Stok ${stockOf(g.sku)} · ${g.list.length} pengajuan</small></span><span class="q">${g.tot}</span><span class="ch">▾</span></button>
+        <div class="rgb">${g.list.map(n=>`<div class="rj"><div class="rjm"><small>${esc(n.qcBy)} · ${esc(n.time)}</small>${n.note?`<div class="cn">Catatan: ${esc(n.note)}</div>`:''}</div><div class="cq">${n.qty}</div><button type="button" class="btn-g rjb" data-nid="${n.id}">Oke</button></div>`).join('')}</div></div>`).join('')}</div></div>`;
+  };
+  const drawRej = ()=>{
+    const r = $('rej'); if(!r) return;
+    const ns = keluar ? waitNotices() : [];
+    const tot = ns.reduce((a,n)=>a+Number(n.qty),0);
+    r.innerHTML = ns.length ? `<div style="margin:16px 24px 0"><button type="button" class="rbar" data-open><span class="rejn">${ns.length}</span><span class="tt"><b>Reject dari QC</b><small>${tot} pcs menunggu dicatat sebagai barang keluar</small></span><span class="go">Lihat daftar ›</span></button></div>` : '';
+    drawLayer();
+  };
+  const busy = new Set();
+  const saveRej = async (ids, btn)=>{
+    if(isSunday()) return toast('Hari Minggu tidak ada pencatatan.');
+    if(ids.some(i=>busy.has(i))) return;
+    ids.forEach(i=>busy.add(i)); if(btn) btn.disabled = true;
+    let done = 0;
+    for(const id of ids){
+      const n = commit(st=>{ const x=st.notices.find(y=>y.id===id); if(!x||x.status!=='WAIT') return null; x.status='DONE'; x.doneBy=S.u.name; x.doneAt=new Date().toISOString(); return x; }); // reject tidak mengurangi stok lagi: sudah tidak dihitung sebagai stok sejak QC
+      if(n){ done++; await saveTransaction({ type:'OUT', reason:'REJECT', pt:S.u.pt, operator:S.u.name, noticeId:n.id, ...stamp(), items:[{ sku:n.sku, name:n.name, qty:n.qty, notes:n.note }] }); }
+    }
+    ids.forEach(i=>busy.delete(i)); drawRej(); drawList(); drawSel();
+    //
+  };
+  $('rej').onclick = e=>{ if(e.target.closest('[data-open]')){ RS.open=true; RS.sku=null; document.body.style.overflow='hidden'; drawLayer(); } };
+  rl.onclick = e=>{
+    if(e.target===rl || e.target.closest('[data-x]')) return closeRl();
+    const g = e.target.closest('[data-g]'); if(g){ RS.sku = RS.sku===g.dataset.g ? '' : g.dataset.g; return drawLayer(); }
+    const all = e.target.closest('[data-all]'); if(all) return saveRej(waitNotices().map(n=>n.id), all);
+    const b = e.target.closest('[data-nid]'); if(b) saveRej([b.dataset.nid], b);
+  };
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape' && RS.open) closeRl(); });
+
+  const drawList = ()=>{
+    const q = norm($('q').value), pool = items();
+    const all = pool.filter(i=>norm((adaSku(i.sku)?i.sku:'')+i.name).includes(q));
+    const pages = Math.max(1, Math.ceil(all.length/PER_PAGE)); S.page = Math.min(S.page, pages);
+    const rows = all.slice((S.page-1)*PER_PAGE, S.page*PER_PAGE);
+    $('list').innerHTML = rows.length ? rows.map(i=>{ const on=S.sel.some(x=>x.sku===i.sku);
+      return `<button data-sku="${esc(i.sku)}" class="${on?'on':''}"><span>${esc(i.name)}<small>${skuTxt(i.sku)}${i.unit?' · '+esc(i.unit):''}</small></span><span class="rt">${keluar?`<span class="stk ${stockOf(i.sku)<=0?'zero':''}">Stok ${stockOf(i.sku)}</span>`:''}${on?I.ck:''}</span></button>`; }).join('')
+      : `<p>Barang tidak ditemukan.</p>`;
+    $('pager').innerHTML = `<button class="nv" data-p="${S.page-1}" ${S.page<=1?'disabled':''}>Back</button>`
+      + pgs(S.page,pages).map(p=>p==='…'?'<span>…</span>':`<button class="pn ${p===S.page?'cur':''}" data-p="${p}">${p}</button>`).join('')
+      + `<button class="nv" data-p="${S.page+1}" ${S.page>=pages?'disabled':''}>Next</button>`;
+  };
+  const drawNote = ()=>{ $('nbox').hidden = true; }; // catatan inline di sebelah Qty tiap barang (opsional)
+  const drawAct = ()=>{
+    const a = S.active, s = a && S.sel.find(x=>x.sku===a.sku);
+    $('actb').innerHTML = s ? `${esc(s.name)}<small>${masuk?'Qty diterima':'Qty'}: ${s.qty||'0'}${keluar?' · Stok '+stockOf(s.sku)+(over(s)?' <span class="req">Melebihi stok</span>':''):''}</small>` : '<span class="mut">Pilih barang, lalu isi Qty</span>';
+    drawNote();
+  };
+  const drawSel = ()=>{
+    drawing = true;
+    $('sel').innerHTML = S.sel.length ? S.sel.map(s=>{
+      const sub = keluar ? `${skuTxt(s.sku)} · Stok ${stockOf(s.sku)}` : skuTxt(s.sku);
+      return `<div class="it" data-sku="${esc(s.sku)}"><div class="srow one"><div class="sc"><span>${esc(s.name)}<small>${sub} <span class="warn" ${over(s)?'':'hidden'}>· Melebihi stok</span></small></span><button class="sx" data-rm="${esc(s.sku)}" aria-label="Hapus ${esc(s.name)}">×</button></div></div>
+        <div class="qblk ctl"><div class="qrow"><div class="pf">Qty ${qin(s)}</div>${ncpS(s)}</div>${ntS(s)}</div></div>`;
+    }).join('') : '<p>Belum ada barang dipilih.</p>';
+    drawing = false;
+    $('cnt').innerHTML = 'Pilihan Barang <span class="mut" style="font-size:16px">('+S.sel.length+'/'+MAX_PILIHAN+')</span>';
+    drawAct();
+  };
+  const setActive = (sku)=>{
+    if(S.active && S.active.sku===sku) return;
+    S.active = { sku, f:'qty' };
+    document.querySelectorAll('#sel .sqi').forEach(i=>i.classList.toggle('act', i.dataset.sku===sku));
+    drawAct();
+  };
+  $('list').onclick = (e)=>{
+    const b = e.target.closest('button'); if(!b) return;
+    const sku = b.dataset.sku, at = S.sel.findIndex(x=>x.sku===sku);
+    if(at>=0){ S.sel.splice(at,1); if(S.active&&S.active.sku===sku) S.active=null; }
+    else { if(S.sel.length>=MAX_PILIHAN) return $('err').textContent='Maksimal '+MAX_PILIHAN+' barang. Hapus salah satu dulu.';
+      S.sel.push({...items().find(i=>i.sku===sku), qty:''}); S.active={ sku, f:'qty' }; }
+    $('err').textContent=''; drawList(); drawSel();
+    if(at<0){ const row = document.querySelector('#sel .it[data-sku="'+CSS.escape(sku)+'"]'); if(row) row.scrollIntoView({ block:'nearest' }); if(MODE()==='desktop') focusQty(sku); }
+  };
+  $('pager').onclick = (e)=>{ const b=e.target.closest('[data-p]'); if(b&&!b.disabled){ S.page=Number(b.dataset.p); drawList(); } };
+  $('sel').onclick = (e)=>{
+    const it = e.target.closest('.it'); if(!it) return;
+    const sku = it.dataset.sku;
+    if(e.target.closest('[data-rm]')){ S.sel = S.sel.filter(x=>x.sku!==sku); if(S.active&&S.active.sku===sku) S.active=null; drawList(); drawSel(); return; }
+    const cp = e.target.closest('.ncp');
+    if(cp){ const s = S.sel.find(x=>x.sku===sku); if(s){ s.e_note = true; syncNote(it,s); const i = it.querySelector('.nt'); setActive(sku); if(i){ i.focus(); const l = i.value.length; try{ i.setSelectionRange(l,l); }catch(x){} } } return; } // ketuk catatan di samping Qty: buka untuk diisi/diedit
+    if(e.target.closest('.nt')){ setActive(sku); return; }
+    if(!e.target.closest('.sqi')){ setActive(sku); focusQty(sku); }
+  };
+  $('sel').addEventListener('focusin', (e)=>{ const t = e.target.closest('.sqi'); if(t) setActive(t.dataset.sku); });
+  $('sel').addEventListener('focusout', (e)=>{ // selesai mengetik catatan: ringkas ke samping Qty
+    const nt = e.target.closest('.nt'); if(!nt || drawing) return;
+    const s = S.sel.find(x=>x.sku===nt.dataset.sku); if(!s) return;
+    s.e_note = false; syncNote(nt.closest('.it'), s);
+  });
+  $('sel').addEventListener('input', (e)=>{
+    const nt = e.target.closest('.nt');
+    if(nt){ const s0 = S.sel.find(x=>x.sku===nt.dataset.sku); if(s0) s0.note = nt.value; return; }
+    const t = e.target.closest('.sqi'); if(!t) return;
+    const s = S.sel.find(x=>x.sku===t.dataset.sku); if(!s) return;
+    t.value = digits(t.value); s.qty = t.value; syncNote(t.closest('.it'), s);
+    const w = t.closest('.it').querySelector('.warn'); if(w) w.hidden = !over(s);
+    $('err').textContent = ''; drawAct();
+  });
+  $('sel').addEventListener('keydown', (e)=>{ if(e.key==='Enter' && e.target.closest('.sqi')){ e.preventDefault(); $('q').focus(); $('q').select(); } }); // Enter: lanjut cari barang berikutnya
+  $('q').oninput = ()=>{ S.page=1; drawList(); };
+  $('notes').oninput = ()=>{ const a=S.active, t=a&&S.sel.find(x=>x.sku===a.sku); if(t) t.note = $('notes').value; autosize($('notes')); };
+  $('q').onclick = ()=>{ if(MODE()==='desktop') return; form.classList.add('searching'); $('fin').style.display='inline-flex'; };
+  $('fin').onclick = ()=>{ form.classList.remove('searching'); $('fin').style.display='none'; };
+
+  $('pad').innerHTML = padHtml(); // numpad hanya tampil di mode tablet
+  $('pad').onclick = (e)=>{
+    const kb = e.target.closest('[data-k]'), a = S.active, s = a && S.sel.find(x=>x.sku===a.sku); if(!kb||!s) return;
+    s.qty = padKey(s.qty, kb.dataset.k); $('err').textContent=''; drawSel();
+  };
+
+
+  $('save').onclick = ()=>{
+    const err = (t)=>{ $('err').textContent = t; };
+    if(isSunday()) return err('Hari Minggu tidak ada pencatatan.');
+    if(!S.sel.length) return err('Pilih barang dulu.');
+    const bad = S.sel.find(s=>!(Number(s.qty)>0));
+    if(bad){ S.active={ sku:bad.sku, f:'qty' }; drawSel(); focusQty(bad.sku); return err('Isi Qty untuk: '+bad.name); }
+    err('');
+    const line = (s)=>`<div class="ci"><div class="ct"><div><b>${esc(s.name)}</b><small>${skuTxt(s.sku)}</small></div><div class="cq">${s.qty}</div></div>`
+      + (over(s) ? `<div class="cd"><span class="req">Melebihi stok (${stockOf(s.sku)})</span></div>` : '')
+      + ((s.note||'').trim() ? `<div class="cn">Catatan: ${esc(s.note.trim())}</div>` : '') + '</div>';
+    dialog(`<b style="font-size:22px">Konfirmasi</b><div>${masuk?'Apakah jumlah sudah sesuai dengan surat jalan?':'Apakah data sudah sesuai dengan jumlah barang?'}</div>
+      <div class="cl">${S.sel.map(line).join('')}</div>
+      <div class="btns"><button class="tb" id="no">Batal</button><button class="tb btn-g" id="yes" style="min-height:56px;font-size:18px">Ya, Simpan</button></div>`);
+    $('no').onclick = ()=>ov.hidden = true;
+    $('yes').onclick = async ()=>{
+      $('yes').disabled = true;
+      const its = S.sel.map(s=>({ sku:s.sku, name:s.name, qty:Number(s.qty), notes:(s.note||'').trim() }));
+      const meta = { pt:S.u.pt, operator:S.u.name, ...stamp() };
+      const direct = masuk && PT().qc===false; // PT tanpa QC internal (Klopmart): barang masuk langsung jadi stok
+      if(direct) commit(st=>{ const q = st.qc[S.u.pt] || (st.qc[S.u.pt]={}); its.forEach(i=>{ const c = q[i.sku] || (q[i.sku]={ layak:0, reject:0 }); c.layak += i.qty; });
+        st.batches.push({ id:'B'+(st.seq++), status:'DIRECT', ...meta, items:its.map(i=>({ ...i, proc:i.qty })) }); });
+      else if(masuk) commit(st=>{ st.batches.push({ id:'B'+(st.seq++), status:'WAIT_QC', ...meta, items:its }); });
+      if(keluar) commit(st=>addOut(st,S.u.pt,its));
+      await saveTransaction({ type: masuk?'IN':'OUT', ...(keluar?{reason:'LAINNYA'}:{}), ...(direct?{qc:false}:{}), ...meta, items:its });
+      dialog(`<div class="chk">✓</div><b style="font-size:22px">Data telah tersimpan</b>${masuk?`<div style="font-size:16px;color:#4b5563">${direct?'Stok sudah bertambah.':'Barang masuk menunggu pengecekan QC.'}</div>`:''}<div class="btns"><button class="tb btn-g" id="ok" style="min-height:56px;font-size:18px">Selesai</button></div>`);
+      $('ok').onclick = ()=>showForm(mode);
+    };
+  };
+  S.sync = ()=>{ drawRej(); drawList(); keepFocus(drawSel); };
+  S.relayout = ()=>{ placeNote(); keepFocus(drawSel); };
+  S.onItems = ()=>{ drawRej(); drawList(); keepFocus(drawSel); }; drawRej(); drawList(); drawSel(); startClock();
+}
+
+/* ===== QC: cek barang masuk dari operator PT yang sama. SKU sama digabung jadi satu baris pending.
+   Boleh dicicil: tiap Simpan, Layak masuk stok (Masuk), Reject dikirim ke operator (Keluar), sisanya tetap pending sampai dicek lagi (hari berikutnya juga boleh) ===== */
+function showQC(){
+  clearInterval(S.clock); ov.hidden = true;
+  const Q = { rows:[], active:'', f:'layak' };
+  app.innerHTML = `<div id="form" style="display:flex;flex-direction:column;min-height:100vh;min-height:100dvh">
+    ${header('QC')}
+    <div class="sun" ${isSunday()?'':'hidden'}>Hari Minggu tidak ada pencatatan. Data tidak bisa disimpan.</div>
+    <div class="hint qhint"><b>Langkah:</b> 1) sentuh barang di antrean, 2) isi <b>Layak</b> dan <b>Reject</b> (atau tekan <b>Semua layak</b>), 3) tekan <b>Simpan</b>.</div>
+    <div class="fb"><div class="cols">
+      <div class="left"><h3>Antrean Pengecekan <span class="mut" id="qn" style="font-size:16px"></span></h3>
+        <div class="lbox"><div class="list" id="qlist"></div></div></div>
+      <div class="mid"><h3>Hasil Pengecekan <span class="mut" id="qc" style="font-size:16px"></span></h3><div class="selw" id="sel"></div></div>
+      <div class="padc"><div class="actb" id="actb"></div><div class="pad" id="pad"></div>
+        <div class="foot"><div class="err" id="err"></div><button class="btn-g" id="save">Simpan</button></div></div>
+    </div></div></div>`;
+  $('lo').onclick = showLogin; $('back').onclick = showMenu;
+  placeNote();
+
+  const num = (v)=>Number(v||0);
+  const done = (s)=>num(s.layak)+num(s.rej);
+  const sisa = (s)=>Number(s.qty)-done(s);
+  const bkTxt = (s)=>sisa(s)<0 ? 'Melebihi pending' : 'Sisa pending: '+sisa(s);
+  const cur = ()=>Q.rows.find(x=>x.sku===Q.active);
+
+  const drawQueue = ()=>{
+    const ag = waitAgg(), bySku = Object.fromEntries(ag.map(a=>[a.sku,a]));
+    const gone = Q.rows.filter(r=>!bySku[r.sku]);
+    if(gone.length){ Q.rows = Q.rows.filter(r=>bySku[r.sku]); if(!cur()) Q.active = Q.rows.length ? Q.rows[0].sku : ''; toast('Ada barang yang sudah dicek QC lain'); }
+    Q.rows.forEach(r=>{ r.opnote = bySku[r.sku].notes.join(' / '); if(r.qty!==bySku[r.sku].qty){ r.qty = bySku[r.sku].qty; if(done(r)>r.qty){ r.layak=''; r.rej=''; } } }); // pengiriman baru dengan SKU sama ikut digabung
+    $('qn').textContent = ag.length ? '('+ag.length+')' : '';
+    $('qlist').innerHTML = ag.length ? ag.map(a=>{ const on = Q.rows.some(r=>r.sku===a.sku);
+      return `<button data-sku="${esc(a.sku)}" class="${on?'on':''}"><span>${esc(a.name)}<small>${skuTxt(a.sku)} · pending ${a.qty} unit${a.n>1?' · '+a.n+' pengiriman':''}</small></span>${on?I.ck:''}</button>`; }).join('')
+      : '<p>Belum ada barang yang perlu dicek.</p>';
+    keepFocus(drawRows);
+  };
+  const drawNote = ()=>{}; // catatan ada di dalam tiap blok Layak dan Reject
+  const drawAct = ()=>{
+    const s = cur();
+    $('actb').innerHTML = s ? `${esc(s.name)}<small>Layak: ${s.layak||'0'} · Reject: ${s.rej||'0'} dari ${s.qty}</small>` : '<span class="mut">Pilih barang, lalu isi Layak dan Reject</span>';
+    drawNote();
+  };
+  const qOf = (s,n)=>num(s[n==='nl'?'layak':'rej']);
+  const noteChip = (s,n)=>qOf(s,n)>0 && !s['e_'+n];   // ada angka: catatan tampil ringkas di samping (isi catatan, atau tombol "Catatan" kalau masih kosong)
+  const noteOpen = (s,n)=>qOf(s,n)>0 && !!s['e_'+n];  // kolom catatan di bawah hanya terbuka saat diketuk / diedit
+  const ntInp = (s,n,ph)=>`<input type="text" class="i nt" data-sku="${esc(s.sku)}" data-n="${n}" value="${esc(s[n]||'')}" placeholder="${ph}" autocomplete="off" ${noteOpen(s,n)?'':'hidden'}>`;
+  const ncp = (s,n)=>`<button type="button" class="ncp${(s[n]||'').trim()?'':' kosong'}" data-n="${n}" title="Catatan" ${noteChip(s,n)?'':'hidden'}><span>${esc((s[n]||'').trim()||'Catatan')}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg></button>`;
+  const syncNotes = (row,s)=>['nl','nr'].forEach(n=>{ const i = row.querySelector('.nt[data-n="'+n+'"]'), c = row.querySelector('.ncp[data-n="'+n+'"]'); if(!i||!c) return;
+    i.hidden = !noteOpen(s,n); c.hidden = !noteChip(s,n); c.firstChild.textContent = (s[n]||'').trim() || 'Catatan'; c.classList.toggle('kosong', !(s[n]||'').trim()); });
+  const inp = (s,f,lab)=>`<div class="pf">${lab} <input class="sqi ${Q.active===s.sku&&Q.f===f?'act':''}" data-sku="${esc(s.sku)}" data-f="${f}" value="${esc(s[f])}" placeholder="0" autocomplete="off" aria-label="${lab} ${esc(s.name)}" ${qtyAttrs()}></div>`;
+  const drawRows = ()=>{
+    $('qc').textContent = Q.rows.length ? '('+Q.rows.length+'/'+MAX_PILIHAN+')' : '';
+    Q.drawing = true;
+    $('sel').innerHTML = Q.rows.length ? Q.rows.map(s=>
+      `<div class="it" data-sku="${esc(s.sku)}"><div class="srow"><div class="sc"><span>${esc(s.name)}<small>${skuTxt(s.sku)}</small></span><button class="sx" data-rm="${esc(s.sku)}" aria-label="Hapus ${esc(s.name)}">×</button></div><div class="sq" style="cursor:default" title="Pending"><b>${s.qty}</b><small>pending</small></div></div>
+        <div class="qblk ok"><div class="qrow">${inp(s,'layak','Layak')}<button type="button" class="chip" data-all="1">Semua layak</button>${ncp(s,'nl')}</div>${ntInp(s,'nl','Catatan...')}</div>
+        <div class="qblk bad"><div class="qrow">${inp(s,'rej','Reject')}${ncp(s,'nr')}</div>${ntInp(s,'nr','Catatan ...')}</div>
+        <div class="bkrow"><span class="bk ${sisa(s)<0?'neg':''}">${bkTxt(s)}</span></div>${s.opnote?`<div class="cn">Catatan operator: ${esc(s.opnote)}</div>`:''}</div>`).join('')
+      : '<p>Pilih barang di antrean untuk dicek.</p>';
+    Q.drawing = false;
+    drawAct();
+  };
+  const setActive = (sku)=>{
+    Q.active = sku;
+    document.querySelectorAll('#sel .sqi').forEach(i=>i.classList.toggle('act', i.dataset.sku===sku && i.dataset.f===Q.f));
+    drawAct();
+  };
+  $('qlist').onclick = (e)=>{
+    const b = e.target.closest('[data-sku]'); if(!b) return;
+    const sku = b.dataset.sku, at = Q.rows.findIndex(x=>x.sku===sku);
+    if(at>=0){ Q.rows.splice(at,1); if(Q.active===sku) Q.active = Q.rows.length ? Q.rows[0].sku : ''; }
+    else { if(Q.rows.length>=MAX_PILIHAN) return $('err').textContent='Maksimal '+MAX_PILIHAN+' barang sekali cek. Simpan dulu, atau hapus salah satu.';
+      const a = waitAgg().find(x=>x.sku===sku); if(!a) return;
+      Q.rows.push({ sku:a.sku, name:a.name, qty:a.qty, layak:'', rej:'', nl:'', nr:'', opnote:a.notes.join(' / ') }); Q.active = sku; Q.f = 'layak'; }
+    $('err').textContent=''; drawQueue();
+    if(at<0 && MODE()==='desktop') focusQty(sku);
+  };
+  $('sel').onclick = (e)=>{
+    const it = e.target.closest('.it'); if(!it) return;
+    const sku = it.dataset.sku;
+    if(e.target.closest('[data-rm]')){ Q.rows = Q.rows.filter(x=>x.sku!==sku); if(Q.active===sku) Q.active = Q.rows.length ? Q.rows[0].sku : ''; drawQueue(); return; }
+    if(e.target.closest('[data-all]')){ const s = Q.rows.find(x=>x.sku===sku); if(s){ const v = Number(s.qty)-num(s.rej); s.layak = v>0 ? String(v) : ''; s.auto = true; Q.f = 'layak'; Q.active = sku; $('err').textContent=''; drawRows(); } return; } // Semua: sisa pending jadi layak
+    const cp = e.target.closest('.ncp');
+    if(cp){ const s = Q.rows.find(x=>x.sku===sku); if(s){ s['e_'+cp.dataset.n] = true; syncNotes(it,s); const i = it.querySelector('.nt[data-n="'+cp.dataset.n+'"]'); if(Q.active!==sku) setActive(sku); if(i){ i.focus(); const l = i.value.length; try{ i.setSelectionRange(l,l); }catch(x){} } } return; } // ketuk catatan di samping: buka lagi untuk diedit
+    if(e.target.closest('.nt')){ if(Q.active!==sku) setActive(sku); return; } // ketuk kolom catatan: biarkan fokus di situ
+    if(!e.target.closest('.sqi')){ setActive(sku); focusQty(sku); }
+  };
+  $('sel').addEventListener('focusin', (e)=>{ const t = e.target.closest('.sqi'); if(t){ Q.f = t.dataset.f; setActive(t.dataset.sku); } });
+  $('sel').addEventListener('focusout', (e)=>{ // selesai mengetik catatan (pindah ke kolom/barang lain): ringkas ke samping
+    const nt = e.target.closest('.nt'); if(!nt || Q.drawing) return;
+    const s = Q.rows.find(x=>x.sku===nt.dataset.sku); if(!s) return;
+    s['e_'+nt.dataset.n] = false; syncNotes(nt.closest('.it'), s);
+  });
+  $('sel').addEventListener('input', (e)=>{
+    const nt = e.target.closest('.nt');
+    if(nt){ const s0 = Q.rows.find(x=>x.sku===nt.dataset.sku); if(s0) s0[nt.dataset.n] = nt.value; return; }
+    const t = e.target.closest('.sqi'); if(!t) return;
+    const s = Q.rows.find(x=>x.sku===t.dataset.sku); if(!s) return;
+    t.value = digits(t.value); s[t.dataset.f] = t.value;
+    if(t.dataset.f==='layak') s.auto = false; // diubah manual: berhenti menyesuaikan otomatis
+    if(t.dataset.f==='rej' && s.auto){ const v = Number(s.qty)-num(s.rej); s.layak = v>0 ? String(v) : ''; t.closest('.it').querySelector('.sqi[data-f="layak"]').value = s.layak; } // setelah "Semua layak", Layak = pending - Reject
+    const row = t.closest('.it'), bk = row.querySelector('.bk'); bk.textContent = bkTxt(s); bk.classList.toggle('neg', sisa(s)<0);
+    syncNotes(row,s);
+    $('err').textContent = ''; drawAct();
+  });
+  $('pad').innerHTML = padHtml(); // numpad hanya tampil di mode tablet
+  $('pad').onclick = (e)=>{
+    const kb = e.target.closest('[data-k]'), s = cur(); if(!kb||!s) return;
+    const f = Q.f==='rej' ? 'rej' : 'layak';
+    s[f] = padKey(s[f], kb.dataset.k); if(f==='layak') s.auto = false; if(f==='rej' && s.auto){ const v = Number(s.qty)-num(s.rej); s.layak = v>0 ? String(v) : ''; } $('err').textContent=''; drawRows();
+  };
+
+  $('save').onclick = ()=>{
+    const err = (t)=>{ $('err').textContent = t; };
+    if(isSunday()) return err('Hari Minggu tidak ada pencatatan.');
+    if(!Q.rows.length) return err('Pilih barang yang mau dicek dulu.');
+    const over = Q.rows.find(s=>sisa(s)<0);
+    if(over){ Q.active = over.sku; drawRows(); return err('Layak + Reject melebihi pending: '+over.name); }
+    const emp = Q.rows.find(s=>done(s)<=0);
+    if(emp){ Q.active = emp.sku; Q.f = 'layak'; drawRows(); focusQty(emp.sku); return err('Isi Layak atau Reject untuk: '+emp.name); }
+    err('');
+    const line = (s)=>`<div class="ci"><div class="ct"><div><b>${esc(s.name)}</b><small>${skuTxt(s.sku)} · pending ${s.qty}</small></div><div class="cq">${done(s)}</div></div>
+      <div class="cd"><span>Layak <b>${num(s.layak)}</b></span><span>Reject <b>${num(s.rej)}</b></span><span>Sisa <b>${sisa(s)}</b></span></div>`
+      + ((s.nl||'').trim() && num(s.layak)>0 ? `<div class="cn">Catatan layak: ${esc(s.nl.trim())}</div>` : '')
+      + ((s.nr||'').trim() && num(s.rej)>0 ? `<div class="cn">Catatan reject: ${esc(s.nr.trim())}</div>` : '')
+      + (num(s.rej)>0 && !(s.nr||'').trim() ? `<div class="cn" style="color:#b45309">Reject belum diberi catatan</div>` : '') + '</div>';
+    dialog(`<b style="font-size:22px">Konfirmasi</b><div>Apakah hasil pengecekan sudah sesuai?</div>
+      <div class="cl">${Q.rows.map(line).join('')}</div>
+      <div class="btns"><button class="tb" id="no">Batal</button><button class="tb btn-g" id="yes" style="min-height:56px;font-size:18px">Ya, Simpan</button></div>`);
+    $('no').onclick = ()=>ov.hidden = true;
+    $('yes').onclick = async ()=>{
+      $('yes').disabled = true;
+      const its = Q.rows.map(s=>({ sku:s.sku, name:s.name, pending:Number(s.qty), layak:num(s.layak), reject:num(s.rej), out:done(s), sisa:sisa(s), noteLayak:(s.nl||'').trim(), notesLayak:(s.nl||'').trim(), noteReject:(s.nr||'').trim(), notes:(s.nr||'').trim() }));
+      const meta = { pt:S.u.pt, qc:S.u.name, ...stamp() };
+      const res = commit(st=>{
+        // pending harus masih cukup (bisa berubah kalau QC lain sudah menyimpan)
+        const ag = aggOf(st,S.u.pt);
+        for(const r of its){ const a = ag.find(x=>x.sku===r.sku); if(!a) return 'gone'; if(a.qty<r.out) return 'changed'; }
+        const ids = new Set();
+        its.forEach(r=>{
+          let t = r.out;
+          st.batches.filter(b=>b.pt===S.u.pt).forEach(b=>b.items.forEach(i=>{ // diproses dari pengiriman paling lama dulu
+            if(i.sku!==r.sku || t<=0) return; const free = i.qty-(i.proc||0); if(free<=0) return;
+            const x = Math.min(t,free); t -= x; i.proc = (i.proc||0)+x; ids.add(b.id);
+          }));
+          const q = st.qc[S.u.pt] || (st.qc[S.u.pt]={}), c = q[r.sku] || (q[r.sku]={ layak:0, reject:0 });
+          c.layak += r.layak; c.reject += r.reject;
+          if(r.reject>0) st.notices.push({ id:'N'+(st.seq++), pt:S.u.pt, sku:r.sku, name:r.name, qty:r.reject, note:r.notes, qcBy:S.u.name, status:'WAIT', createdAt:meta.createdAt, time:meta.time });
+        });
+        st.batches.forEach(b=>{ if(ids.has(b.id) && b.items.every(i=>(i.proc||0)>=i.qty)){ b.status='QC_DONE'; b.qcBy=S.u.name; b.qcAt=meta.createdAt; } });
+        meta.batchIds = [...ids]; return 'ok'; });
+      if(res!=='ok'){ dialog(`<b style="font-size:22px">${res==='gone'?'Sudah dicek':'Pending berubah'}</b><div>${res==='gone'?'Barang ini sudah selesai dicek oleh QC lain.':'Sisa pending barang ini sudah berkurang. Cek ulang jumlahnya.'}</div><div class="btns"><button class="tb btn-g" id="ok" style="min-height:56px;font-size:18px">Kembali</button></div>`); $('ok').onclick = ()=>{ ov.hidden = true; drawQueue(); }; return; }
+      await saveTransaction({ type:'QC', ...meta, items:its });
+      const nrej = its.filter(s=>s.reject>0).length, nsisa = its.filter(s=>s.sisa>0).length;
+      dialog(`<div class="chk">✓</div><b style="font-size:22px">Hasil QC tersimpan</b>${nrej?'<div style="font-size:16px;color:#4b5563">Info reject sudah dikirim ke operator.</div>':''}${nsisa?'<div style="font-size:16px;color:#4b5563">'+nsisa+' barang masih punya sisa pending.</div>':''}<div class="btns"><button class="tb btn-g" id="ok" style="min-height:56px;font-size:18px">Selesai</button></div>`);
+      $('ok').onclick = showQC;
+    };
+  };
+  S.sync = drawQueue;
+  S.relayout = ()=>{ placeNote(); keepFocus(drawRows); };
+  drawQueue(); startClock();
+}
+
+function showAdd(){
+  clearInterval(S.clock); ov.hidden = true; S.sync = null; S.onItems = null; muatBarang();
+  app.innerHTML = `<div id="form" style="display:flex;flex-direction:column;min-height:100vh;min-height:100dvh">
+    ${header('Tambah Barang')}
+    <div class="fb"><div class="addbox">
+      <div><label for="nname">Nama Barang</label><input class="i" id="nname" placeholder="Contoh: Mainframe 170 cm" autocomplete="off"></div>
+      <div><label for="nsku">SKU <span class="mut">(opsional)</span></label><input class="i" id="nsku" placeholder="Contoh: MFP1700" autocomplete="off" autocapitalize="characters"><div class="hint">Boleh dikosongkan. SKU bisa diisi nanti di sheet, barangnya tetap bisa langsung dipakai. Kalau diisi: huruf, angka, dan tanda strip, tidak boleh sama dengan SKU yang sudah ada.</div></div>
+      <div class="err" id="err"></div>
+      <button class="btn-g" id="save">Simpan</button>
+    </div></div></div>`;
+  $('lo').onclick = showLogin; $('back').onclick = showMenu;
+  $('save').onclick = async ()=>{
+    const err = (t)=>{ $('err').textContent = t; };
+    const sku = $('nsku').value.trim().toUpperCase().replace(/\s+/g,''), name = $('nname').value.trim().replace(/\s+/g,' ');
+    if(!name) return err('Isi nama barang.');
+    if(sku && !/^[A-Z0-9][A-Z0-9-]*$/.test(sku)) return err('SKU hanya boleh huruf, angka, dan tanda strip (-).');
+    await muatBarang(5000); // pastikan daftar dari sheet terbaru sebelum cek duplikat
+    ST = load();
+    const dupSku = sku && items().find(i=>norm(i.sku)===norm(sku));
+    if(dupSku) return err('SKU sudah dipakai oleh: '+dupSku.name+' ('+dupSku.sku+')');
+    const dupName = items().find(i=>norm(i.name)===norm(name));
+    if(dupName) return err('Nama barang sudah ada'+(adaSku(dupName.sku)?' dengan SKU '+dupName.sku:'')+'.');
+    err('');
+    dialog(`<b style="font-size:22px">Konfirmasi</b><div>Tambahkan barang baru ini?</div>
+      <div class="cl"><div class="ci"><div class="ct"><div><b>${esc(name)}</b><small>${sku?esc(sku):'SKU belum diisi'}</small></div></div></div></div>
+      <div class="btns"><button class="tb" id="no">Batal</button><button class="tb btn-g" id="yes" style="min-height:56px;font-size:18px">Ya, Simpan</button></div>`);
+    $('no').onclick = ()=>ov.hidden = true;
+    $('yes').onclick = async ()=>{
+      $('yes').disabled = true;
+      commit(st=>{ st.newItems.push({ sku:kunciBarang(sku,name), name, pt:S.u.pt, unit:'pcs' }); });
+      await saveNewItem({ sku, name, createdBy:S.u.name, pt:S.u.pt, ...stamp() });
+      dialog(`<div class="chk">✓</div><b style="font-size:22px">Barang baru tersimpan</b><div class="btns"><button class="tb btn-g" id="ok" style="min-height:56px;font-size:18px">Selesai</button></div>`);
+      $('ok').onclick = showAdd;
+    };
+  };
+  startClock(); $('nname').focus();
+}
+
+function dialog(html){ ov.innerHTML = `<div class="dg${html.includes('class="cl"')?' wide':''}">${html}</div>`; ov.hidden = false; }
+showLogin();
+</script>
+</body>
+</html>
